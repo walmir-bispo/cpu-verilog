@@ -12,6 +12,16 @@ module CPU (
     wire RB_W;
     wire [2:0] ALUControl;
     wire Reg_AB_W;
+    wire [1:0] regDST;
+    wire HILO_W;
+    wire ShiftIn;
+    wire ShiftAmt;
+    wire [1:0] EC_CTRL;
+    wire [2:0] Shift;
+    wire EPC_W;
+    wire [1:0] CB;
+    wire [2:0] ALUSrcB;
+    
 
 // Fios de dados
     wire [31:0] PC_In;
@@ -35,13 +45,36 @@ module CPU (
     wire Flag_Overflow;
     wire Flag_Negativo;
     wire Flag_Zero;
+
     wire Flag_Igual;
+    wire not_Flag_Igual;
+    assign not_Flag_Igual = ~Flag_Igual;
+
     wire Flag_Maior;
+    wire not_Flag_Maior;
+    assign not_Flag_Maior = ~Flag_Maior;
+
     wire Flag_Menor;
     wire [31:0] Reg_A_Out;
     wire [31:0] Reg_B_Out;
-
-
+    wire [31:0] LOMult;
+    wire [31:0] HIMult;
+    wire [31:0] mux_div_mult_Hi;
+    wire [31:0] HI_Out;
+    wire [31:0] mux_div_mult_LO;
+    wire [31:0] LO_Out;
+    wire [31:0] signExtend_out;
+    wire [31:0] shiftLeft32_out;
+    wire [31:0] mux_shiftIn_Out;
+    wire [4:0] mux_shiftAmt_Out;
+    wire [31:0] RegDesloc_Out;
+    wire [31:0] EPC_Out;
+    wire [31:0] address_routine;
+    wire [31:0] address_atual_pc;
+    wire [25:0] AuxiliarDesvioIncond;
+    assign AuxiliarDesvioIncond={Instr15_0,Instr20_16,Instr25_21};
+    wire [31:0] ShiftLeft26_28MaisPcIg32_out;
+    wire mux_branch_out;
 
     Registrador PC(
         clk,
@@ -107,9 +140,7 @@ module CPU (
         RegReadData1A,
         RegReadData2B
     );
-    // no nosso esquema a gente tinha os registradores auxiliares A e B, mas lembro que o prof falou que 
-    // eles são invisíveis ao programador, então acho que não precisamos colocar eles
-
+    
 
     Registrador Reg_A(
         clk,
@@ -150,6 +181,123 @@ module CPU (
         ALU_Out_Reg_W,
         ALU_Out_Fio,
         ALU_Out_Reg_Out
+    );
+
+    mux_RegDst MUX_reg_DST(  
+        regDST,
+        Instr20_16,
+        Instr15_0[15:11],
+        MuxRegDst_Out
     ); 
+
+    
+    Mult Multiplicador(
+        clk,
+        reset,
+        Reg_A_Out,
+        Reg_B_Out,
+        LOMult,
+        HIMult
+    );
+
+    //LOMult e HIMult vao entrar em mux_div_mult_Hi e mux_div_mult_LO
+    //intanciamento do mux_div_mult_Hi, fio de saida já registrado
+    //intanciamento do mux_div_mult_LO, fio de saida já registrado
+
+    Registrador HI(
+        clk,
+        reset,
+        HILO_W,
+        mux_div_mult_Hi,
+        HI_Out
+    );
+
+
+    Registrador LO(
+        clk,
+        reset,
+        HILO_W,
+        mux_div_mult_LO,
+        LO_Out
+    );
+
+    sign_extend signExtend(
+        Instr15_0,
+        signExtend_out
+    );
+
+    shiftLeft32 shift_left_2(
+        signExtend_out, 
+        shiftLeft32_out
+    );
+
+    mux_shiftIn MuxShiftIn(
+        ShiftIn,
+        Reg_A_Out,
+        Reg_B_Out,
+        signExtend_out, //imediato
+        mux_shiftIn_Out;
+    );
+
+    mux_shiftAmt MuxShiftAmt(
+        ShiftAmt,
+        Reg_B_Out,
+        Instr15_0,
+        MDR_Out
+        mux_shiftAmt_Out
+    );
+
+
+    RegDesloc RegDeDeslocamento(
+        clk,
+        reset,
+        Shift, //indica qual shift realizar
+        mux_shiftAmt_Out, //quantos shifts realizar
+        mux_shiftIn_Out,
+        RegDesloc_Out
+    );
+
+    exception_handler tratador_exception(
+        EC_CTRL,
+        PC_Out,
+        address_routine,
+        address_atual_pc
+    );
+
+
+    Registrador EPC(
+        clk,
+        reset,
+        EPC_W,
+        address_atual_pc,
+        EPC_Out
+    );
+
+    ShiftLeft26_28MaisPcIg32 ShiftLeft26Para28MaisPcIg32(
+        AuxiliarDesvioIncond,
+        PC_Out,
+        ShiftLeft26_28MaisPcIg32_out
+    );
+
+    mux_CB MUX_branch (
+        CB,
+        Flag_Igual, 
+        not_Flag_Igual, 
+        Flag_Maior,
+        not_Flag_Maior,  
+        mux_branch_out
+    );
+
+    mux_alu_src_b MUX_aluSrc_B(
+        ALUSrcB,
+        Reg_B_Out,
+        signExtend_out,
+        MDR_Out,
+        shiftLeft32_out,
+        MuxALUSrcB_Out
+    );
+
+
+
 
 endmodule
