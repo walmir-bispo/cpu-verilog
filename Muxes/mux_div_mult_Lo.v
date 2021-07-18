@@ -4,6 +4,6 @@ module mux_div_mult_Lo (
     input wire [31:0] data_1,
     output wire [31:0] Data_out
 );
-    assign Data_out = (selector) ? data_0 : data_1
+    assign Data_out = (selector) ? data_1 : data_0;
     
 endmodule
