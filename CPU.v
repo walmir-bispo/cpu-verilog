@@ -21,6 +21,11 @@ module CPU (
     wire EPC_W;
     wire [1:0] CB;
     wire [2:0] ALUSrcB;
+    wire BHControl;
+    wire [1:0] IorD;
+    wire WriteMemSrc;
+    wire PCWriteCond;
+
     
 
 // Fios de dados
@@ -59,9 +64,9 @@ module CPU (
     wire [31:0] Reg_B_Out;
     wire [31:0] LOMult;
     wire [31:0] HIMult;
-    wire [31:0] mux_div_mult_Hi;
+    wire [31:0] MuxDivMultHI_Out;
     wire [31:0] HI_Out;
-    wire [31:0] mux_div_mult_LO;
+    wire [31:0] MuxDivMultLO_Out;
     wire [31:0] LO_Out;
     wire [31:0] signExtend_out;
     wire [31:0] shiftLeft32_out;
@@ -75,16 +80,22 @@ module CPU (
     assign AuxiliarDesvioIncond={Instr15_0,Instr20_16,Instr25_21};
     wire [31:0] ShiftLeft26_28MaisPcIg32_out;
     wire mux_branch_out;
-
+    wire [31:0] storer_half_byte_Out;
+    wire [31:0] load_half_byte_Out;
+    wire [31:0] div_OutLO;
+    wire [31:0] div_OutHI;
+    wire divPor0;
+    wire AndOrPC_W_out;
+    
     Registrador PC(
         clk,
         reset,
-        PC_W,
+        AndOrPC_W_out,
         PC_In,
         PC_Out
     );
 
-    //intanciamento do muxIorD, fio de saida já registrado
+    
     //intanciamento do MuxWriteMemSrc, fio de saida já registrado
 
     Memoria Mem (
@@ -200,15 +211,14 @@ module CPU (
         HIMult
     );
 
-    //LOMult e HIMult vao entrar em mux_div_mult_Hi e mux_div_mult_LO
-    //intanciamento do mux_div_mult_Hi, fio de saida já registrado
-    //intanciamento do mux_div_mult_LO, fio de saida já registrado
+    
+    //intanciamento do MuxDivMultLO, fio de saida já registrado
 
     Registrador HI(
         clk,
         reset,
         HILO_W,
-        mux_div_mult_Hi,
+        MuxDivMultHI_Out,
         HI_Out
     );
 
@@ -217,7 +227,7 @@ module CPU (
         clk,
         reset,
         HILO_W,
-        mux_div_mult_LO,
+        MuxDivMultLO_Out,
         LO_Out
     );
 
@@ -288,6 +298,14 @@ module CPU (
         mux_branch_out
     );
 
+
+    AndOrPC_W PCWriteAndCond(
+        mux_branch_out,
+        PCWriteCond,
+        PC_W,
+        AndOrPC_W_out
+    );
+
     mux_alu_src_b MUX_aluSrc_B(
         ALUSrcB,
         Reg_B_Out,
@@ -296,6 +314,79 @@ module CPU (
         shiftLeft32_out,
         MuxALUSrcB_Out
     );
+
+    storer_half_byte storeByteHalf(
+        BHControl,
+        MDR_Out,
+        Reg_B_Out,
+        storer_half_byte_Out
+    );
+
+
+    load_half_byte LoadByteHalf(
+        BHControl,
+        MDR_Out,
+        load_half_byte_Out
+    );
+
+
+    div divisor(
+        Reg_A_Out,
+        Reg_B_Out,
+        reset,
+        clk,
+        div_OutLO,
+        div_OutHI,
+        divPor0
+    );
+
+    
+   mux_div_mult_Hi muxDivMultHi(
+       divOrMult,
+       div_OutHI,
+       HIMult,
+       MuxDivMultHI_Out;
+   );
+
+
+
+    mux_div_mult_Lo muxDivMultLo(
+       divOrMult,
+       div_OutLO,
+       LOMult,
+       MuxDivMultLO_Out;
+   );
+
+
+
+    mux_IorD MuxIOrD(
+      PC_Out,
+      ALU_Out_Reg_Out,
+      address_routine,// fiquei na duvida se o endereço da rotina tem que vir pra o PC
+      MuxIorD_Out,
+      IorD
+    );
+
+
+
+    mux_writememorysrc MuxWriteMem(
+      WriteMemSrc,
+      storer_half_byte_Out,
+      Reg_B_Out,
+      MuxWriteMemSrc_Out
+    );
+
+
+
+    mux_ALUSrca MuxALUSrcA(
+        ALUSrcA,
+        PC_Out,
+        RAA_Out,
+        Reg_A_Out,
+        MuxALUSrcA_Out
+    );
+
+
 
 
 
