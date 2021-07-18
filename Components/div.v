@@ -4,10 +4,11 @@ module div(input wire[31:0] Data_a,
             input wire clk,
             output wire [31:0] lo,
             output wire [31:0] hi,
-            output reg exception);
+            output wire exception);
 
   reg [31:0] auxLO;
   reg [31:0] auxHI;
+  reg auxException;
 
 always @(posedge clk)
 begin
@@ -26,5 +27,6 @@ begin
 end
   assign lo = auxLO;
   assign hi = auxHI;
+  assign exception = auxException;
 
 endmodule
