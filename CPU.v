@@ -24,6 +24,8 @@ module CPU (
     wire BHControl;
     wire [1:0] IorD;
     wire WriteMemSrc;
+    wire PCWriteCond;
+
     
 
 // Fios de dados
@@ -83,11 +85,12 @@ module CPU (
     wire [31:0] div_OutLO;
     wire [31:0] div_OutHI;
     wire divPor0;
+    wire AndOrPC_W_out;
     
     Registrador PC(
         clk,
         reset,
-        PC_W,
+        AndOrPC_W_out,
         PC_In,
         PC_Out
     );
@@ -293,6 +296,14 @@ module CPU (
         Flag_Maior,
         not_Flag_Maior,  
         mux_branch_out
+    );
+
+
+    AndOrPC_W PCWriteAndCond(
+        mux_branch_out,
+        PCWriteCond,
+        PC_W,
+        AndOrPC_W_out
     );
 
     mux_alu_src_b MUX_aluSrc_B(
