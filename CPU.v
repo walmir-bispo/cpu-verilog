@@ -25,6 +25,9 @@ module CPU (
     wire [1:0] IorD;
     wire WriteMemSrc;
     wire PCWriteCond;
+    wire [2:0] PCSource;
+    wire [2:0] memToReg;
+    wire controlDivMult;
 
     
 
@@ -86,6 +89,10 @@ module CPU (
     wire [31:0] div_OutHI;
     wire divPor0;
     wire AndOrPC_W_out;
+    wire [31:0] ALU_Out_Reg_Out;
+    wire [31:0] mux_PCSource_out;
+    wire [31:0] MUX_memoryToReg_out;
+    wire [31:0] mux_div_mult_out;
     
     Registrador PC(
         clk,
@@ -246,14 +253,14 @@ module CPU (
         Reg_A_Out,
         Reg_B_Out,
         signExtend_out, //imediato
-        mux_shiftIn_Out;
+        mux_shiftIn_Out
     );
 
     mux_shiftAmt MuxShiftAmt(
         ShiftAmt,
         Reg_B_Out,
         Instr15_0,
-        MDR_Out
+        MDR_Out,
         mux_shiftAmt_Out
     );
 
@@ -345,7 +352,7 @@ module CPU (
        divOrMult,
        div_OutHI,
        HIMult,
-       MuxDivMultHI_Out;
+       MuxDivMultHI_Out
    );
 
 
@@ -354,7 +361,7 @@ module CPU (
        divOrMult,
        div_OutLO,
        LOMult,
-       MuxDivMultLO_Out;
+       MuxDivMultLO_Out
    );
 
 
@@ -368,14 +375,12 @@ module CPU (
     );
 
 
-
     mux_writememorysrc MuxWriteMem(
       WriteMemSrc,
       storer_half_byte_Out,
       Reg_B_Out,
       MuxWriteMemSrc_Out
     );
-
 
 
     mux_ALUSrca MuxALUSrcA(
@@ -386,6 +391,35 @@ module CPU (
         MuxALUSrcA_Out
     );
 
+    mux_PCSource MUX_PCSrc(
+        PCSource,
+        ShiftLeft26_28MaisPcIg32_out,
+        Reg_A_Out,
+        ALU_Out_Fio,
+        EPC_Out,
+        ALU_Out_Reg_Out,
+        load_half_byte_Out,
+        mux_PCSource_out
+    );
+
+    muxDivMult MUX_div_mult(
+        controlDivMult,
+        LO_Out,
+        HI_Out,
+        mux_div_mult_out
+    );
+
+    mux_memToReg MUX_memoryToReg(
+        memToReg,
+        PC_Out, 
+        Flag_Menor, 
+        RegDesloc_Out, 
+        mux_div_mult_out,
+        MDR_Out, 
+        ALU_Out_Reg_Out, 
+        load_half_byte_Out,
+        MUX_memoryToReg_out
+    );
 
 
 
