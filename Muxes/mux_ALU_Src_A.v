@@ -9,6 +9,6 @@ module mux_ALUSrca (
     wire [31:0] A2;
     assign A1 = (selector[0]) ? data_1 : data_0;
     assign A2 = (selector[0]) ? 32'd16 : data_2;
-    assign Data_out = (selector[1]) A2 : A1;
+    assign Data_out = (selector[1]) ? A2 : A1;
 
 endmodule
