@@ -1,26 +1,30 @@
-module div(input wire Data_a,
-            input wire Data_b,
+module div(input wire[31:0] Data_a,
+            input wire [31:0] Data_b,
             input wire reset,
             input wire clk,
-            output reg [31:0] lo,
-            output reg [31:0] hi,
+            output wire [31:0] lo,
+            output wire [31:0] hi,
             output reg exception);
 
+  reg [31:0] auxLO;
+  reg [31:0] auxHI;
 
 always @(posedge clk)
 begin
   if(reset)
   begin
-    lo <= 32'd0;
-    hi <= 32'd0;
+    auxLO <= 32'd0;
+    auxHI <= 32'd0;
   end
-  if(Data_b == 1'b0)
+  if(Data_b == 32'd0)
   begin
-    exception <= 0;
+    exception <= 1;
     end
-    lo <= Data_a/Data_b;
-    hi <= Data_a%Data_b;
+    auxLO <= Data_a/Data_b;
+    auxHI <= Data_a%Data_b;
 
 end
+  assign lo = auxLO;
+  assign hi = auxHI;
 
 endmodule
