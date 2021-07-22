@@ -1,0 +1,30 @@
+module UnidadeDeControle (
+    input wire [5:0] Instr31_26,
+    input wire Flag_Overflow,
+    output wire PC_W,
+    output wire Mem_W,
+    output wire MDR_W,
+    output wire RAA_W,
+    output wire IR_W,
+    output wire RB_W,
+    output wire Reg_AB_W,
+    output wire controlDivMult,
+    output wire WriteMemSrc,
+    output wire PCWriteCond,
+    output wire EPC_W,
+    output wire HILO_W,
+    output wire ShiftIn,
+    output wire ShiftAmt,
+    output wire BHControl,
+    output wire [1:0] EC_CTRL,
+    output wire [1:0] regDST,
+    output wire [1:0] CB,
+    output wire [1:0] IorD,
+    output wire [2:0] ALUSrcB,
+    output wire [2:0] PCSource,
+    output wire [2:0] memToReg,
+    output wire [2:0] ALUControl,
+    output wire [2:0] Shift
+);
+    
+endmodule
