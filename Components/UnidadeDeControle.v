@@ -1,6 +1,5 @@
 module UnidadeDeControle (
     module teste (
-
     //Inputs
     input wire clk,
     input wire reset,
@@ -11,39 +10,116 @@ module UnidadeDeControle (
     input wire Flag_Overflow,
     //Outputs
     //      writes
-    output reg PC_W,
-    output reg Mem_W,
-    output reg MDR_W,
-    output reg RAA_W,
-    output reg IR_W,
-    output reg RB_W,
-    output reg Reg_AB_W,
-    output reg EPC_W,
-    output reg HILO_W,
-    output reg ALU_Out_Reg_W,
-    output reg PCWriteCond,
+    output wire PC_W_OUT,
+    output wire Mem_W_OUT,
+    output wire MDR_W_OUT,
+    output wire RAA_W_OUT,
+    output wire IR_W_OUT,
+    output wire RB_W_OUT,
+    output wire Reg_AB_W_OUT,
+    output wire EPC_W_OUT,
+    output wire HILO_W_OUT,
+    output wire ALU_Out_Reg_W_OUT,
+    output wire PCWriteCond_OUT,
     //      muxsControl
-    output reg DivOuMultMemToReg,
-    output reg divOrMult,
-    output reg WriteMemSrc,
-    output reg [1:0] ShiftIn,
-    output reg [1:0] ShiftAmt,
-    output reg [1:0] EC_CTRL,
-    output reg [1:0] RegDST,
-    output reg [1:0] CB, //contole de branch
-    output reg [1:0] IorD,
-    output reg [1:0] ALUSrcA,
-    output reg [2:0] ALUSrcB,
-    output reg [2:0] PCSource,
-    output reg [2:0] MemToReg,
-    output reg [2:0] Shift,
+    output wire DivOuMultMemToReg_OUT,
+    output wire divOrMult_OUT,
+    output wire WriteMemSrc_OUT,
+    output wire [1:0] ShiftIn_OUT,
+    output wire [1:0] ShiftAmt_OUT,
+    output wire [1:0] EC_CTRL_OUT,
+    output wire [1:0] RegDST_OUT,
+    output wire [1:0] CB_OUT, //contole de branch
+    output wire [1:0] IorD_OUT,
+    output wire [1:0] ALUSrcA_OUT,
+    output wire [2:0] ALUSrcB_OUT,
+    output wire [2:0] PCSource_OUT,
+    output wire [2:0] MemToReg_OUT,
+    output wire [2:0] Shift_OUT,
     //      Control de blocos
-    output reg BHControl,
-    output reg [2:0] UlaFunct,
-    output reg [1:0] EC //ExceptionControl
+    output wire BHControl_OUT,
+    output wire [2:0] UlaFunct_OUT,
+    output wire [1:0] EC_OUT //ExceptionControl
 );
 
 
+
+
+//Registradores Auxiliares de saida
+
+     reg PC_W;
+     reg Mem_W;
+     reg MDR_W;
+     reg RAA_W;
+     reg IR_W;
+     reg RB_W;
+     reg Reg_AB_W;
+     reg EPC_W;
+     reg HILO_W;
+     reg ALU_Out_Reg_W;
+     reg PCWriteCond;
+    //      muxsControl
+     reg DivOuMultMemToReg;
+     reg divOrMult;
+     reg WriteMemSrc;
+     reg [1:0] ShiftIn;
+     reg [1:0] ShiftAmt;
+     reg [1:0] EC_CTRL;
+     reg [1:0] RegDST;
+     reg [1:0] CB; //contole de branch
+     reg [1:0] IorD;
+     reg [1:0] ALUSrcA;
+     reg [2:0] ALUSrcB;
+     reg [2:0] PCSource;
+     reg [2:0] MemToReg;
+     reg [2:0] Shift;
+    //      Control de blocos
+     reg BHControl;
+     reg [2:0] UlaFunct;
+     reg [1:0] EC; //ExceptionControl
+
+
+
+
+    //Ajustes para a saida nao ser do tipo reg
+    //      writes
+     assign PC_W_OUT=PC_W;
+     assign Mem_W_OUT=Mem_W;
+     assign MDR_W_OUT=MDR_W;
+     assign RAA_W_OUT=RAA_W ;
+     assign IR_W_OUT=IR_W ;
+     assign RB_W_OUT=RB_W ;
+     assign Reg_AB_W_OUT=Reg_AB_W ;
+     assign EPC_W_OUT=EPC_W ;
+     assign HILO_W_OUT=HILO_W ;
+     assign ALU_Out_Reg_W_OUT=ALU_Out_Reg_W ;
+     assign PCWriteCond_OUT=PCWriteCond ;
+    //      muxsControl
+     assign DivOuMultMemToReg_OUT=DivOuMultMemToReg ;
+     assign divOrMult_OUT=divOrMult ;
+     assign WriteMemSrc_OUT=WriteMemSrc ;
+     assign ShiftIn_OUT=ShiftIn ;
+     assign ShiftAmt_OUT=ShiftAmt ;
+     assign EC_CTRL_OUT= EC_CTRL;
+     assign RegDST_OUT= RegDST;
+     assign CB_OUT=CB ; //contole de branch
+     assign IorD_OUT=IorD ;
+     assign ALUSrcA_OUT=ALUSrcA ;
+     assign ALUSrcB_OUT=ALUSrcB ;
+     assign PCSource_OUT=PCSource ;
+     assign MemToReg_OUT=MemToReg ;
+     assign Shift_OUT=Shift ;
+    //      Control de blocos
+     assign BHControl_OUT=BHControl ;
+     assign UlaFunct_OUT=UlaFunct ;
+     assign EC_OUT=EC ; //ExceptionControl
+
+
+
+
+
+
+//Registradores internos
 reg [6:0] estado_atual;
 reg [4:0] Counter;
 // Parametros para Estados
@@ -1745,6 +1821,10 @@ end
 
 
 endmodule
+
+
+
+
 
 
 
