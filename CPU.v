@@ -10,28 +10,37 @@ module CPU (
     wire RAA_W;
     wire IR_W;
     wire RB_W;
-    wire [2:0] ALUControl;
     wire Reg_AB_W;
-    wire [1:0] regDST;
+    wire ALU_Out_Reg_W,
+    wire controlDivMult;
+    wire WriteMemSrc;
+    wire PCWriteCond;
+    wire EPC_W;
     wire HILO_W;
     wire ShiftIn;
     wire ShiftAmt;
-    wire [1:0] EC_CTRL;
-    wire [2:0] Shift;
-    wire EPC_W;
-    wire [1:0] CB;
-    wire [2:0] ALUSrcB;
     wire BHControl;
+    wire [1:0] EC_CTRL;
+    wire [1:0] regDST;
+    wire [1:0] CB;
     wire [1:0] IorD;
-    wire WriteMemSrc;
-    wire PCWriteCond;
+    wire [2:0] ALUSrcB;
     wire [2:0] PCSource;
     wire [2:0] memToReg;
-    wire controlDivMult;
-
+    wire [2:0] ALUControl;
+    wire [2:0] Shift;
     
 
 // Fios de dados
+    wire Flag_Overflow;
+    wire Flag_Negativo;
+    wire Flag_Zero;
+    wire Flag_Igual;
+    wire not_Flag_Igual;
+    wire [4:0] Instr25_21;
+    wire [4:0] Instr20_16;
+    wire [4:0] MuxRegDst_Out;
+    wire [5:0] Instr31_26;
     wire [31:0] PC_In;
     wire [31:0] PC_Out;
     wire [31:0] MuxIorD_Out;
@@ -39,23 +48,14 @@ module CPU (
     wire [31:0] Mem_Out;
     wire [31:0] MDR_Out;
     wire [31:0] RAA_Out;
-    wire [5:0] Instr31_26;
-    wire [4:0] Instr25_21;
-    wire [4:0] Instr20_16;
     wire [15:0] Instr15_0;
-    wire [4:0] MuxRegDst_Out;
     wire [31:0] MuxMemToReg_Out;
     wire [31:0] RegReadData1A;
     wire [31:0] RegReadData2B;
     wire [31:0] MuxALUSrcA_Out;
     wire [31:0] MuxALUSrcB_Out;
     wire [31:0] ALU_Out_Fio;
-    wire Flag_Overflow;
-    wire Flag_Negativo;
-    wire Flag_Zero;
-
-    wire Flag_Igual;
-    wire not_Flag_Igual;
+    
     assign not_Flag_Igual = ~Flag_Igual;
 
     wire Flag_Maior;
@@ -63,6 +63,9 @@ module CPU (
     assign not_Flag_Maior = ~Flag_Maior;
 
     wire Flag_Menor;
+    wire mux_branch_out;
+    wire divPor0;
+    wire AndOrPC_W_out;
     wire [31:0] Reg_A_Out;
     wire [31:0] Reg_B_Out;
     wire [31:0] LOMult;
@@ -82,13 +85,10 @@ module CPU (
     wire [25:0] AuxiliarDesvioIncond;
     assign AuxiliarDesvioIncond={Instr15_0,Instr20_16,Instr25_21};
     wire [31:0] ShiftLeft26_28MaisPcIg32_out;
-    wire mux_branch_out;
     wire [31:0] storer_half_byte_Out;
     wire [31:0] load_half_byte_Out;
     wire [31:0] div_OutLO;
     wire [31:0] div_OutHI;
-    wire divPor0;
-    wire AndOrPC_W_out;
     wire [31:0] ALU_Out_Reg_Out;
     wire [31:0] mux_PCSource_out;
     wire [31:0] MUX_memoryToReg_out;
