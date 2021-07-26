@@ -1,4 +1,5 @@
 module UnidadeDeControle (
+    module teste (
     //Inputs
     input wire clk,
     input wire reset,
@@ -9,38 +10,116 @@ module UnidadeDeControle (
     input wire Flag_Overflow,
     //Outputs
     //      writes
-    output wire PC_W,
-    output wire Mem_W,
-    output wire MDR_W,
-    output wire RAA_W,
-    output wire IR_W,
-    output wire RB_W,
-    output wire Reg_AB_W,
-    output wire EPC_W,
-    output wire HILO_W,
-    output wire ALU_Out_Reg_W,
+    output wire PC_W_OUT,
+    output wire Mem_W_OUT,
+    output wire MDR_W_OUT,
+    output wire RAA_W_OUT,
+    output wire IR_W_OUT,
+    output wire RB_W_OUT,
+    output wire Reg_AB_W_OUT,
+    output wire EPC_W_OUT,
+    output wire HILO_W_OUT,
+    output wire ALU_Out_Reg_W_OUT,
+    output wire PCWriteCond_OUT,
     //      muxsControl
-    output wire controlDivMult,
-    output wire WriteMemSrc,
-    output wire PCWriteCond,
-    output wire ShiftIn,
-    output wire ShiftAmt,
-    output wire [1:0] EC_CTRL,
-    output wire [1:0] regDST,
-    output wire [1:0] CB,
-    output wire [1:0] IorD,
-    output wire [1:0] ALUSrcA,
-    output wire [2:0] ALUSrcB,
-    output wire [2:0] PCSource,
-    output wire [2:0] memToReg,
-    output wire [2:0] Shift,
+    output wire DivOuMultMemToReg_OUT,
+    output wire divOrMult_OUT,
+    output wire WriteMemSrc_OUT,
+    output wire [1:0] ShiftIn_OUT,
+    output wire [1:0] ShiftAmt_OUT,
+    output wire [1:0] EC_CTRL_OUT,
+    output wire [1:0] RegDST_OUT,
+    output wire [1:0] CB_OUT, //contole de branch
+    output wire [1:0] IorD_OUT,
+    output wire [1:0] ALUSrcA_OUT,
+    output wire [2:0] ALUSrcB_OUT,
+    output wire [2:0] PCSource_OUT,
+    output wire [2:0] MemToReg_OUT,
+    output wire [2:0] Shift_OUT,
     //      Control de blocos
-    output wire BHControl,
-    output wire [2:0] UlaFunct,
-    output wire [1:0] EC //ExceptionControl
+    output wire BHControl_OUT,
+    output wire [2:0] UlaFunct_OUT,
+    output wire [1:0] EC_OUT //ExceptionControl
 );
 
 
+
+
+//Registradores Auxiliares de saida
+
+     reg PC_W;
+     reg Mem_W;
+     reg MDR_W;
+     reg RAA_W;
+     reg IR_W;
+     reg RB_W;
+     reg Reg_AB_W;
+     reg EPC_W;
+     reg HILO_W;
+     reg ALU_Out_Reg_W;
+     reg PCWriteCond;
+    //      muxsControl
+     reg DivOuMultMemToReg;
+     reg divOrMult;
+     reg WriteMemSrc;
+     reg [1:0] ShiftIn;
+     reg [1:0] ShiftAmt;
+     reg [1:0] EC_CTRL;
+     reg [1:0] RegDST;
+     reg [1:0] CB; //contole de branch
+     reg [1:0] IorD;
+     reg [1:0] ALUSrcA;
+     reg [2:0] ALUSrcB;
+     reg [2:0] PCSource;
+     reg [2:0] MemToReg;
+     reg [2:0] Shift;
+    //      Control de blocos
+     reg BHControl;
+     reg [2:0] UlaFunct;
+     reg [1:0] EC; //ExceptionControl
+
+
+
+
+    //Ajustes para a saida nao ser do tipo reg
+    //      writes
+     assign PC_W_OUT=PC_W;
+     assign Mem_W_OUT=Mem_W;
+     assign MDR_W_OUT=MDR_W;
+     assign RAA_W_OUT=RAA_W ;
+     assign IR_W_OUT=IR_W ;
+     assign RB_W_OUT=RB_W ;
+     assign Reg_AB_W_OUT=Reg_AB_W ;
+     assign EPC_W_OUT=EPC_W ;
+     assign HILO_W_OUT=HILO_W ;
+     assign ALU_Out_Reg_W_OUT=ALU_Out_Reg_W ;
+     assign PCWriteCond_OUT=PCWriteCond ;
+    //      muxsControl
+     assign DivOuMultMemToReg_OUT=DivOuMultMemToReg ;
+     assign divOrMult_OUT=divOrMult ;
+     assign WriteMemSrc_OUT=WriteMemSrc ;
+     assign ShiftIn_OUT=ShiftIn ;
+     assign ShiftAmt_OUT=ShiftAmt ;
+     assign EC_CTRL_OUT= EC_CTRL;
+     assign RegDST_OUT= RegDST;
+     assign CB_OUT=CB ; //contole de branch
+     assign IorD_OUT=IorD ;
+     assign ALUSrcA_OUT=ALUSrcA ;
+     assign ALUSrcB_OUT=ALUSrcB ;
+     assign PCSource_OUT=PCSource ;
+     assign MemToReg_OUT=MemToReg ;
+     assign Shift_OUT=Shift ;
+    //      Control de blocos
+     assign BHControl_OUT=BHControl ;
+     assign UlaFunct_OUT=UlaFunct ;
+     assign EC_OUT=EC ; //ExceptionControl
+
+
+
+
+
+
+//Registradores internos
 reg [6:0] estado_atual;
 reg [4:0] Counter;
 // Parametros para Estados
@@ -69,6 +148,7 @@ parameter st_ReadLO =         6'd20;
 parameter st_ReadHI =         6'd21;
 parameter st_JumpReg =        6'd22;
 parameter st_RTE =            6'd23;
+parameter st_ShiftsToReg =    6'd37;
 parameter st_RT_Left_shamt =  6'd24;
 parameter st_RS_Left_RT =     6'd25;
 parameter st_RT_RightA_Shamt =6'd26;
@@ -137,30 +217,31 @@ always @(posedge clk) begin
         MDR_W =   1'd0;
         RAA_W =   1'd0;
         IR_W =    1'd0;
-        RB_W =    1'd1;
+        RB_W =    1'd1; /// para o reset da pilha 
         Reg_AB_W= 1'd0;
         EPC_W=    1'd0;
         HILO_W =  1'd0;
         ALU_Out_Reg_W=1'd0;
+        PCWriteCond=1'd0;
         //Muxs
-        memToReg= 3'd4;
+        MemToReg= 3'd4;
          //RegsInterno
         Counter=32'd0;
         estado_atual =st_Busca;
       
     end
-    else if (estado_atual==st_DivException || (divPor0==1'd1 && estado_atual==Div)) begin
+    else if (estado_atual==st_DivException || (divPor0==1'd1 && estado_atual==st_Div)) begin
         
-        if (divPor0==1'd1 && estado_atual==Div) begin// se está entrando no primeiro ciclo dessa excecao
+        if (divPor0==1'd1 && estado_atual==st_Div) begin// se está entrando no primeiro ciclo dessa excecao
            Counter=1'd0; 
         end
 
 
-        if (Counter==32'd0) begin
+        if (Counter==32'd0 || Counter==32'd1 || Counter==32'd2) begin// 3 ciclos para ler memoria
             //writes
             PC_W  =   1'd0;
             Mem_W =   1'd0;
-            MDR_W =   1'd0;
+            MDR_W =   1'd1;///
             RAA_W =   1'd0;
             IR_W =    1'd0;
             RB_W =    1'd0;
@@ -168,6 +249,7 @@ always @(posedge clk) begin
             EPC_W=    1'd1;
             HILO_W =  1'd0;
             ALU_Out_Reg_W=1'd0;
+            PCWriteCond=1'd0;
             
             //Muxs
             IorD =     2'd2;
@@ -178,7 +260,7 @@ always @(posedge clk) begin
             //Estado_atual
             estado_atual=st_DivException;
         end
-        else if (Counter==32'd1) begin
+        else if (Counter==32'd3) begin
              //writes
             PC_W  =   1'd0;
             Mem_W =   1'd0;
@@ -190,6 +272,7 @@ always @(posedge clk) begin
             EPC_W=    1'd0;
             HILO_W =  1'd0;
             ALU_Out_Reg_W=1'd0;
+            PCWriteCond=1'd0;
 
             //Muxs
             PCSource=3'd5;
@@ -208,11 +291,11 @@ always @(posedge clk) begin
            Counter=1'd0; 
         end
 
-        if (Counter=1'd0) begin
+        if (Counter==32'd0 || Counter==32'd1 || Counter==32'd2) begin// 3 ciclos para ler memoria
              //writes
             PC_W  =   1'd0;
             Mem_W =   1'd0;
-            MDR_W =   1'd0;
+            MDR_W =   1'd1;
             RAA_W =   1'd0;
             IR_W =    1'd0;
             RB_W =    1'd0;
@@ -220,6 +303,7 @@ always @(posedge clk) begin
             EPC_W=    1'd1;
             HILO_W =  1'd0;
             ALU_Out_Reg_W=1'd0;
+            PCWriteCond=1'd0;
             
             //Muxs
             IorD =     2'd2;
@@ -230,7 +314,7 @@ always @(posedge clk) begin
             //Estado_atual
             estado_atual=st_Overflow;
         end
-        else if (Counter=1'd1) begin
+        else if (Counter==32'd3) begin
              //writes
             PC_W  =   1'd0;
             Mem_W =   1'd0;
@@ -242,6 +326,7 @@ always @(posedge clk) begin
             EPC_W=    1'd0;
             HILO_W =  1'd0;
             ALU_Out_Reg_W=1'd0;
+            PCWriteCond=1'd0;
 
             //Muxs
             PCSource=3'd5;
@@ -258,18 +343,19 @@ always @(posedge clk) begin
             
             st_Busca:begin
                 
-                if (Counter==32'd0) begin
+                if (Counter==32'd0 || Counter==32'd1 || Counter==32'd2) begin//3 cilcos para ler memoria
                     //writes
                     PC_W  =   1'd1; ///
                     Mem_W =   1'd0;
-                    MDR_W =   1'd0;
+                    MDR_W =   1'd1; ///
                     RAA_W =   1'd0;
                     IR_W =    1'd1; ///
                     RB_W =    1'd0;
                     Reg_AB_W= 1'd0;
                     EPC_W=    1'd0;
                     HILO_W =  1'd0;
-                    ALU_Out_Reg_W=1'd0; 
+                    ALU_Out_Reg_W=1'd1; 
+                    PCWriteCond=1'd0;
                     //muxs
                     ALUSrcA=2'd0;
                     ALUSrcB=3'd1;
@@ -278,7 +364,7 @@ always @(posedge clk) begin
                     UlaFunct=3'd1; //soma 
                     Counter= Counter+ 32'd1;
                 end
-                else if (Counter==32'd1) begin
+                else if (Counter==32'd3) begin
                     //writes
                     PC_W  =   1'd0; 
                     Mem_W =   1'd0;
@@ -289,7 +375,8 @@ always @(posedge clk) begin
                     Reg_AB_W= 1'd0;
                     EPC_W=    1'd0;
                     HILO_W =  1'd0;
-                    ALU_Out_Reg_W=1'd0;  
+                    ALU_Out_Reg_W=1'd1; ///
+                    PCWriteCond=1'd0; 
 
                     //muxs
                     ALUSrcA=2'd0;
@@ -373,7 +460,7 @@ always @(posedge clk) begin
 
 
                                 
-                                default: 
+                                //default: 
                             endcase
                         end
 
@@ -381,7 +468,7 @@ always @(posedge clk) begin
                             estado_atual=st_addImediato;
                         end 
                         I_ADDI:begin
-                            estado_atual=st_ADDImediato; //nao tem o estado ADDIU
+                            estado_atual=st_addImediato; //nao tem o estado ADDIU
                         end
 
                         I_BEQ :begin
@@ -441,7 +528,7 @@ always @(posedge clk) begin
                         end
 
                         J_JAL :begin
-                            estado_atual=st_JAL;
+                            estado_atual=st_Jump;
                         end
                         
 
@@ -468,6 +555,7 @@ always @(posedge clk) begin
                 EPC_W=    1'd0;
                 HILO_W =  1'd0;
                 ALU_Out_Reg_W=1'd1; ///
+                PCWriteCond=1'd0;
                 //muxs
                 ALUSrcA=2'd1;
                 ALUSrcB=3'd2;
@@ -476,40 +564,42 @@ always @(posedge clk) begin
                 // Controle de operadores
                 UlaFunct=3'd1; //soma
                 // Mundando para o prox estado
-                case (estado_atual)
+                case (funct)
                     I_LB :begin
-                            estado_atual=st_LoadsAndStores;
+                            estado_atual=st_Loads;
                     end
 
                     I_LH :begin
-                            estado_atual=st_LoadsAndStores;
+                            estado_atual=st_Loads;
                      end
 
                     I_LW :begin
-                            estado_atual=st_LoadsAndStores;
+                            estado_atual=st_Loads;
                     end
 
                     I_SB :begin
-                            estado_atual=st_LoadsAndStores;
+                            estado_atual=st_Loads;
                     end
 
                     I_SH :begin
-                            estado_atual=st_LoadsAndStores;
+                            estado_atual=st_Loads;
                     end
 
                     I_SW :begin
-                            estado_atual=st_LoadsAndStores;
+                            estado_atual=st_StoreWord;
                     end 
-                    default: 
+                    //default: 
                 endcase
 
             end
            
            st_Loads:begin
-                 //writes
+                
+                if (Counter==32'd0 || Counter==32'd1) begin//3 cilcos para ler memoria
+                     //writes
                 PC_W  =   1'd0;
                 Mem_W =   1'd0;
-                MDR_W =   1'd0;
+                MDR_W =   1'd1; ///
                 RAA_W =   1'd0;
                 IR_W =    1'd0;
                 RB_W =    1'd0;
@@ -517,27 +607,59 @@ always @(posedge clk) begin
                 EPC_W=    1'd0;
                 HILO_W =  1'd0;
                 ALU_Out_Reg_W=1'd0;
+                PCWriteCond=1'd0;
 
                 //muxs
                 IorD = 2'd1;
 
                 //RegInterno
-                Counter=32'd0; 
+                Counter= Counter +32'd1;
+                end
+                else begin
+                    //writes
+                    PC_W  =   1'd0;
+                    Mem_W =   1'd0;
+                    MDR_W =   1'd0;
+                    RAA_W =   1'd0;
+                    IR_W =    1'd0;
+                    RB_W =    1'd0;
+                    Reg_AB_W= 1'd0;
+                    EPC_W=    1'd0;
+                    HILO_W =  1'd0;
+                    ALU_Out_Reg_W=1'd0;
+                    PCWriteCond=1'd0;
 
-                case (param)
-                    I_LB :begin
-                            estado_atual=st_LoadsAndStores;
-                    end
+                    //muxs
+                    IorD = 2'd1;
 
-                    I_LH :begin
-                            estado_atual=st_LoadsAndStores;
-                     end
+                    //RegInterno
+                    Counter =32'd0;
 
-                    I_LW :begin
-                            estado_atual=st_LoadsAndStores;
-                    end 
-                    default: 
-                endcase
+                    case (funct)
+                        I_LB :begin
+                            estado_atual=st_LoadByte;
+                        end
+
+                        I_LH :begin
+                            estado_atual=st_LoadHalf;
+                        end
+
+                        I_LW :begin
+                            estado_atual=st_LoadWord;
+                        end 
+
+                        I_SB :begin
+                            estado_atual=st_StoreByte;
+                        end
+
+                        I_SH :begin
+                            estado_atual=st_StoreHalf;
+                        end
+                        //default: 
+                    endcase
+                 end
+
+                
 
            end
 
@@ -553,10 +675,11 @@ always @(posedge clk) begin
                 EPC_W=    1'd0;
                 HILO_W =  1'd0;
                 ALU_Out_Reg_W=1'd0;
+                PCWriteCond=1'd0;
 
                 //muxs
-                memToReg=3'd7;
-                regDST=2'd3;
+                MemToReg=3'd7;
+                RegDST=2'd3;
 
                 //RegInterno
                 Counter=32'd0; 
@@ -579,10 +702,11 @@ always @(posedge clk) begin
                 EPC_W=    1'd0;
                 HILO_W =  1'd0;
                 ALU_Out_Reg_W=1'd0;
+                PCWriteCond=1'd0;
 
                 //muxs
-                memToReg=3'd7;
-                regDST=2'd3;
+                MemToReg=3'd7;
+                RegDST=2'd3;
                 
                 //RegInterno
                 Counter=32'd0; 
@@ -605,10 +729,11 @@ always @(posedge clk) begin
                 EPC_W=    1'd0;
                 HILO_W =  1'd0;
                 ALU_Out_Reg_W=1'd0;
+                PCWriteCond=1'd0;
 
                 //muxs
-                memToReg=3'd5;
-                regDST=2'd3;
+                MemToReg=3'd5;
+                RegDST=2'd3;
 
                 //RegInterno
                 Counter=32'd0; 
@@ -619,81 +744,165 @@ always @(posedge clk) begin
            end
 
            st_StoreWord:begin
-                //writes
-                PC_W  =   1'd0;
-                Mem_W =   1'd1;///
-                MDR_W =   1'd0;
-                RAA_W =   1'd0;
-                IR_W =    1'd0;
-                RB_W =    1'd0;
-                Reg_AB_W= 1'd0;
-                EPC_W=    1'd0;
-                HILO_W =  1'd0;
-                ALU_Out_Reg_W=1'd0;
+               
+               if (Counter==32'd0) begin // dois ciclos para escrever na memoria
+                    //writes
+                    PC_W  =   1'd0;
+                    Mem_W =   1'd1;///
+                    MDR_W =   1'd0;
+                    RAA_W =   1'd0;
+                    IR_W =    1'd0;
+                    RB_W =    1'd0;
+                    Reg_AB_W= 1'd0;
+                    EPC_W=    1'd0;
+                    HILO_W =  1'd0;
+                    ALU_Out_Reg_W=1'd0;
+                    PCWriteCond=1'd0;
 
-                //muxs
-                IorD = 2'd1;
-                WriteMemSrc=1'd1;
+                    //muxs
+                    IorD = 2'd1;
+                    WriteMemSrc=1'd1;
 
-                //RegInterno
-                Counter=32'd0; 
-                //mudando para o prox estado
-                estado_atual=st_Busca;
-                
+                    //RegInterno
+                    Counter= Counter+32'd1; 
+                    //mudando para o prox estado
+                    estado_atual=st_Busca; 
+               end
+               else begin
+                    //writes
+                    PC_W  =   1'd0;
+                    Mem_W =   1'd1;///
+                    MDR_W =   1'd0;
+                    RAA_W =   1'd0;
+                    IR_W =    1'd0;
+                    RB_W =    1'd0;
+                    Reg_AB_W= 1'd0;
+                    EPC_W=    1'd0;
+                    HILO_W =  1'd0;
+                    ALU_Out_Reg_W=1'd0;
+                    PCWriteCond=1'd0;
+
+                    //muxs
+                    IorD = 2'd1;
+                    WriteMemSrc=1'd1;
+
+                    //RegInterno
+                    Counter=32'd0; 
+                    //mudando para o prox estado
+                    estado_atual=st_Busca;
+               end
                 
            end
            st_StoreByte:begin
-                //writes
-                PC_W  =   1'd0;
-                Mem_W =   1'd1;///
-                MDR_W =   1'd0;
-                RAA_W =   1'd0;
-                IR_W =    1'd0;
-                RB_W =    1'd0;
-                Reg_AB_W= 1'd0;
-                EPC_W=    1'd0;
-                HILO_W =  1'd0;
-                ALU_Out_Reg_W=1'd0;
-
-                //muxs
-                IorD = 2'd1;
-                WriteMemSrc=1'd0;
-
-                //RegInterno
-                Counter=32'd0; 
-
-                //controle de blocos
-                BHControl=1'd0;
-                //mudando para o prox estado
-                estado_atual=st_Busca;
                 
+                if (Counter==32'd0) begin // dois ciclos para escrever na memoria
+                    //writes
+                    PC_W  =   1'd0;
+                    Mem_W =   1'd1;///
+                    MDR_W =   1'd0;
+                    RAA_W =   1'd0;
+                    IR_W =    1'd0;
+                    RB_W =    1'd0;
+                    Reg_AB_W= 1'd0;
+                    EPC_W=    1'd0;
+                    HILO_W =  1'd0;
+                    ALU_Out_Reg_W=1'd0;
+                    PCWriteCond=1'd0;
+
+                    //muxs
+                    IorD = 2'd1;
+                    WriteMemSrc=1'd0;
+
+                    //RegInterno
+                    Counter=Counter+32'd1; 
+
+                    //controle de blocos
+                    BHControl=1'd0;
+                    //mudando para o prox estado
+                    estado_atual=st_Busca;
+               end
+                else begin
+                    //writes
+                    PC_W  =   1'd0;
+                    Mem_W =   1'd1;///
+                    MDR_W =   1'd0;
+                    RAA_W =   1'd0;
+                    IR_W =    1'd0;
+                    RB_W =    1'd0;
+                    Reg_AB_W= 1'd0;
+                    EPC_W=    1'd0;
+                    HILO_W =  1'd0;
+                    ALU_Out_Reg_W=1'd0;
+                    PCWriteCond=1'd0;
+
+                    //muxs
+                    IorD = 2'd1;
+                    WriteMemSrc=1'd0;
+
+                    //RegInterno
+                    Counter=32'd0; 
+
+                    //controle de blocos
+                    BHControl=1'd0;
+                    //mudando para o prox estado
+                    estado_atual=st_Busca;
+                end
            end
 
            st_StoreHalf:begin
-                //writes
-                PC_W  =   1'd0;
-                Mem_W =   1'd1;///
-                MDR_W =   1'd0;
-                RAA_W =   1'd0;
-                IR_W =    1'd0;
-                RB_W =    1'd0;
-                Reg_AB_W= 1'd0;
-                EPC_W=    1'd0;
-                HILO_W =  1'd0;
-                ALU_Out_Reg_W=1'd0;
-
-                //muxs
-                IorD = 2'd1;
-                WriteMemSrc=1'd0;
                 
-                //RegInterno
-                Counter=32'd0; 
+                if (Counter==32'd0) begin // dois ciclos para escrever na memoria
+                    //writes
+                    PC_W  =   1'd0;
+                    Mem_W =   1'd1;///
+                    MDR_W =   1'd0;
+                    RAA_W =   1'd0;
+                    IR_W =    1'd0;
+                    RB_W =    1'd0;
+                    Reg_AB_W= 1'd0;
+                    EPC_W=    1'd0;
+                    HILO_W =  1'd0;
+                    ALU_Out_Reg_W=1'd0;
+                    PCWriteCond=1'd0;
 
-                //controle de blocos
-                BHControl=1'd1;
-                //mudando para o prox estado
-                estado_atual=st_Busca;
-                
+                    //muxs
+                    IorD = 2'd1;
+                    WriteMemSrc=1'd0;
+                    
+                    //RegInterno
+                    Counter=Counter+32'd1; 
+
+                    //controle de blocos
+                    BHControl=1'd1;
+                    //mudando para o prox estado
+                    estado_atual=st_Busca;  
+               end
+                else begin
+                    //writes
+                    PC_W  =   1'd0;
+                    Mem_W =   1'd1;///
+                    MDR_W =   1'd0;
+                    RAA_W =   1'd0;
+                    IR_W =    1'd0;
+                    RB_W =    1'd0;
+                    Reg_AB_W= 1'd0;
+                    EPC_W=    1'd0;
+                    HILO_W =  1'd0;
+                    ALU_Out_Reg_W=1'd0;
+                    PCWriteCond=1'd0;
+
+                    //muxs
+                    IorD = 2'd1;
+                    WriteMemSrc=1'd0;
+                    
+                    //RegInterno
+                    Counter=32'd0; 
+
+                    //controle de blocos
+                    BHControl=1'd1;
+                    //mudando para o prox estado
+                    estado_atual=st_Busca;
+                end
            end
             
             st_LogAri_TipoR :begin
@@ -709,7 +918,8 @@ always @(posedge clk) begin
                     Reg_AB_W= 1'd0;
                     EPC_W=    1'd0;
                     HILO_W =  1'd0;
-                    ALU_Out_Reg_W=1'd0;
+                    ALU_Out_Reg_W=1'd1;
+                    PCWriteCond=1'd0;
                     
                     //muxs
                     ALUSrcA=2'd2;
@@ -727,7 +937,7 @@ always @(posedge clk) begin
                         R_SUB :begin
                             UlaFunct=3'd2; //subtrai
                         end
-                        default: 
+                       // default: 
                     endcase
 
                     //trantando do prox estado
@@ -754,8 +964,9 @@ always @(posedge clk) begin
                     EPC_W=    1'd0;
                     HILO_W =  1'd0;
                     ALU_Out_Reg_W=1'd0;
+                    PCWriteCond=1'd0;
                     //muxs
-                    RegDst= 2'd3;
+                    RegDST= 2'd3;
                     MemToReg= 4'd6;
 
                     //prox estado
@@ -767,7 +978,7 @@ always @(posedge clk) begin
 
             end
            
-            st_ADDImediato:begin
+            st_addImediato:begin
                 
                 if (Counter==32'd0) begin
                     //writes
@@ -780,7 +991,8 @@ always @(posedge clk) begin
                     Reg_AB_W= 1'd0;
                     EPC_W=    1'd0;
                     HILO_W =  1'd0;
-                    ALU_Out_Reg_W=1'd0;   
+                    ALU_Out_Reg_W=1'd0; 
+                    PCWriteCond=1'd0;  
                     //muxs 
                     ALUSrcA=2'd2;
                     ALUSrcB=3'd2;
@@ -811,13 +1023,14 @@ always @(posedge clk) begin
                     Reg_AB_W= 1'd0;
                     EPC_W=    1'd0;
                     HILO_W =  1'd0;
-                    ALU_Out_Reg_W=1'd0; 
+                    ALU_Out_Reg_W=1'd0;
+                    PCWriteCond=1'd0; 
                     //mux
-                    RegDst=2'd0;
+                    RegDST=2'd0;
                     MemToReg=4'd6;
                     //prox estado
                     estado_atual=st_Busca;
-                    Counter=32'd0;'
+                    Counter=32'd0;
 
                 end
 
@@ -825,7 +1038,782 @@ always @(posedge clk) begin
 
             end
 
-            default: 
+            st_menorQ :begin    //menoQ se refere ao slti
+                if (Counter==32'd0) begin
+                    //writes
+                    PC_W  =   1'd0;
+                    Mem_W =   1'd0;
+                    MDR_W =   1'd0;
+                    RAA_W =   1'd0;
+                    IR_W =    1'd0;
+                    RB_W =    1'd0;
+                    Reg_AB_W= 1'd0;
+                    EPC_W=    1'd0;
+                    HILO_W =  1'd0;
+                    ALU_Out_Reg_W=1'd0;
+                    PCWriteCond=1'd0; 
+                    //mux
+                    ALUSrcA=2'd2;
+                    ALUSrcB=3'd2;
+                    //Operadores
+                    UlaFunct=3'd7;
+                    Counter=Counter+ 32'd1;
+                end
+                else if (Counter==32'd1) begin
+                     //writes
+                    PC_W  =   1'd0;
+                    Mem_W =   1'd0;
+                    MDR_W =   1'd0;
+                    RAA_W =   1'd0;
+                    IR_W =    1'd0;
+                    RB_W =    1'd1; ///
+                    Reg_AB_W= 1'd0;
+                    EPC_W=    1'd0;
+                    HILO_W =  1'd0;
+                    ALU_Out_Reg_W=1'd0; 
+                    PCWriteCond=1'd0;
+                    //mux
+                    RegDST= 2'd0;
+                    MemToReg= 4'd1;
+                    //prox estados
+                    estado_atual=st_Busca;
+                    Counter=32'd0;
+                end
+            end
+
+            st_SLT :begin
+
+                if (Counter==32'd0) begin
+                    //writes
+                    PC_W  =   1'd0;
+                    Mem_W =   1'd0;
+                    MDR_W =   1'd0;
+                    RAA_W =   1'd0;
+                    IR_W =    1'd0;
+                    RB_W =    1'd0;
+                    Reg_AB_W= 1'd0;
+                    EPC_W=    1'd0;
+                    HILO_W =  1'd0;
+                    ALU_Out_Reg_W=1'd0; 
+                    PCWriteCond=1'd0;
+                    //mux
+                    ALUSrcA=2'd2;
+                    ALUSrcB=3'd0;
+                    //Operadores
+                    UlaFunct=3'd7;
+                    Counter=Counter+ 32'd1;
+                end
+                else if (Counter==32'd1) begin
+                     //writes
+                    PC_W  =   1'd0;
+                    Mem_W =   1'd0;
+                    MDR_W =   1'd0;
+                    RAA_W =   1'd0;
+                    IR_W =    1'd0;
+                    RB_W =    1'd1; ///
+                    Reg_AB_W= 1'd0;
+                    EPC_W=    1'd0;
+                    HILO_W =  1'd0;
+                    ALU_Out_Reg_W=1'd0; 
+                    PCWriteCond=1'd0;
+                    //mux
+                    RegDST= 2'd3;
+                    MemToReg= 4'd1;
+                    //prox estado
+                    estado_atual=st_Busca;
+                    Counter=32'd0;
+                end
+
+            end
+
+            st_Jump:begin
+                
+                 //writes
+                    PC_W  =   1'd1; ///
+                    Mem_W =   1'd0;
+                    MDR_W =   1'd0;
+                    RAA_W =   1'd0;
+                    IR_W =    1'd0;
+                    RB_W =    1'd0; 
+                    Reg_AB_W= 1'd0;
+                    EPC_W=    1'd0;
+                    HILO_W =  1'd0;
+                    ALU_Out_Reg_W=1'd0;
+                    PCWriteCond=1'd0; 
+                    //mux
+                    PCSource=3'd0;
+                    //prox estado
+                    Counter= 32'd0;
+                    if (OPCode==J_JAL) begin
+                        estado_atual=st_JAL;
+                    end
+                    else begin
+                        estado_atual=st_Busca;
+                    end
+
+
+            end
+
+            st_JAL :begin
+
+                //writes
+                PC_W  =   1'd0;
+                Mem_W =   1'd0;
+                MDR_W =   1'd0;
+                RAA_W =   1'd0;
+                IR_W =    1'd0;
+                RB_W =    1'd1; ///
+                Reg_AB_W= 1'd0;
+                EPC_W=    1'd0;
+                HILO_W =  1'd0;
+                ALU_Out_Reg_W=1'd0; 
+                PCWriteCond=1'd0;
+                //mux
+                RegDST= 2'd1;
+                MemToReg= 4'd0;
+                //prox estado
+                Counter=32'd0;
+                estado_atual=st_Busca;
+
+            end
+
+            /*st_Div:begin
+
+                    Codigo em andamento, voltar aqui apos conclusao
+
+            end*/
+
+            st_Mult :begin
+
+                if (Counter<32'd31) begin
+                    //writes
+                    PC_W  =   1'd0;
+                    Mem_W =   1'd0;
+                    MDR_W =   1'd0;
+                    RAA_W =   1'd0;
+                    IR_W =    1'd0;
+                    RB_W =    1'd0;
+                    Reg_AB_W= 1'd0;
+                    EPC_W=    1'd0;
+                    HILO_W =  1'd0;
+                    ALU_Out_Reg_W=1'd0;
+                    PCWriteCond=1'd0;
+
+                    Counter =Counter+32'd1; 
+                end
+                else if (Counter==32'd31) begin
+                    //writes
+                    PC_W  =   1'd0;
+                    Mem_W =   1'd0;
+                    MDR_W =   1'd0;
+                    RAA_W =   1'd0;
+                    IR_W =    1'd0;
+                    RB_W =    1'd0;
+                    Reg_AB_W= 1'd0;
+                    EPC_W=    1'd0;
+                    HILO_W =  1'd1; ///
+                    ALU_Out_Reg_W=1'd0;
+                    PCWriteCond=1'd0;
+                    //muxs
+                    divOrMult=1'd1;
+
+                    //prox estado
+                    estado_atual=st_Busca;
+                    Counter=32'd0;
+
+
+                end
+
+            end
+
+            st_ReadLO :begin
+
+                //writes
+                PC_W  =   1'd0;
+                Mem_W =   1'd0;
+                MDR_W =   1'd0;
+                RAA_W =   1'd0;
+                IR_W =    1'd0;
+                RB_W =    1'd1; ///
+                Reg_AB_W= 1'd0;
+                EPC_W=    1'd0;
+                HILO_W =  1'd0;
+                ALU_Out_Reg_W=1'd0;
+                PCWriteCond=1'd0;
+                //muxs
+                RegDST=1'd0;
+                MemToReg= 4'd3;
+                DivOuMultMemToReg=   1'd0;
+                //prox estado
+                Counter= 32'd0;
+                estado_atual=st_Busca;
+
+            end
+
+             st_ReadHI :begin
+
+                //writes
+                PC_W  =   1'd0;
+                Mem_W =   1'd0;
+                MDR_W =   1'd0;
+                RAA_W =   1'd0;
+                IR_W =    1'd0;
+                RB_W =    1'd1; ///
+                Reg_AB_W= 1'd0;
+                EPC_W=    1'd0;
+                HILO_W =  1'd0;
+                ALU_Out_Reg_W=1'd0;
+                PCWriteCond=1'd0;
+                //muxs
+                RegDST=1'd0;
+                MemToReg= 4'd3;
+                DivOuMultMemToReg=   1'd1;
+                //prox estado
+                Counter= 32'd0;
+                estado_atual=st_Busca;
+
+            end
+
+            st_JumpReg :begin
+
+                //writes
+                PC_W  =   1'd1; ///
+                Mem_W =   1'd0;
+                MDR_W =   1'd0;
+                RAA_W =   1'd0;
+                IR_W =    1'd0;
+                RB_W =    1'd0;
+                Reg_AB_W= 1'd0;
+                EPC_W=    1'd0;
+                HILO_W =  1'd0;
+                ALU_Out_Reg_W=1'd0;
+                PCWriteCond=1'd0;
+                //muxs
+                PCSource=3'd1;
+                //prox estado
+                Counter= 32'd0;
+                estado_atual=st_Busca;
+
+
+            end
+
+            st_RTE :begin
+
+                //writes
+                PC_W  =   1'd1; ///
+                Mem_W =   1'd0;
+                MDR_W =   1'd0;
+                RAA_W =   1'd0;
+                IR_W =    1'd0;
+                RB_W =    1'd0;
+                Reg_AB_W= 1'd0;
+                EPC_W=    1'd0;
+                HILO_W =  1'd0;
+                ALU_Out_Reg_W=1'd0;
+                PCWriteCond=1'd0;
+                //muxs
+                PCSource=3'd3;
+                //prox estado
+                Counter= 32'd0;
+                estado_atual=st_Busca;
+
+
+            end
+
+            st_RT_Left_shamt :begin
+
+                //writes
+                PC_W  =   1'd0; 
+                Mem_W =   1'd0;
+                MDR_W =   1'd0;
+                RAA_W =   1'd0;
+                IR_W =    1'd0;
+                RB_W =    1'd0;
+                Reg_AB_W= 1'd0;
+                EPC_W=    1'd0;
+                HILO_W =  1'd0;
+                ALU_Out_Reg_W=1'd0;
+                PCWriteCond=1'd0;
+                //muxs
+                ShiftIn=2'd1;
+                ShiftAmt=2'd1;
+                Shift=3'd2;
+                //prox estado
+                estado_atual=st_ShiftsToReg;
+                Counter=32'd0;
+
+            end
+
+            st_RS_Left_RT :begin
+
+                //writes
+                PC_W  =   1'd0; 
+                Mem_W =   1'd0;
+                MDR_W =   1'd0;
+                RAA_W =   1'd0;
+                IR_W =    1'd0;
+                RB_W =    1'd0;
+                Reg_AB_W= 1'd0;
+                EPC_W=    1'd0;
+                HILO_W =  1'd0;
+                ALU_Out_Reg_W=1'd0;
+                PCWriteCond=1'd0;
+                //muxs
+                ShiftIn=2'd0;
+                ShiftAmt=2'd0;
+                Shift=3'd2;
+                //prox estado
+                estado_atual=st_ShiftsToReg;
+                Counter=32'd0;
+
+            end
+
+            st_RT_RightA_Shamt :begin
+
+                //writes
+                PC_W  =   1'd0; 
+                Mem_W =   1'd0;
+                MDR_W =   1'd0;
+                RAA_W =   1'd0;
+                IR_W =    1'd0;
+                RB_W =    1'd0;
+                Reg_AB_W= 1'd0;
+                EPC_W=    1'd0;
+                HILO_W =  1'd0;
+                ALU_Out_Reg_W=1'd0;
+                PCWriteCond=1'd0;
+                //muxs
+                ShiftIn=2'd1;
+                ShiftAmt=2'd1;
+                Shift=3'd4;
+                //prox estado
+                estado_atual=st_ShiftsToReg;
+                Counter=32'd0;
+
+            end
+
+            st_RS_RightA_RT :begin
+
+                //writes
+                PC_W  =   1'd0; 
+                Mem_W =   1'd0;
+                MDR_W =   1'd0;
+                RAA_W =   1'd0;
+                IR_W =    1'd0;
+                RB_W =    1'd0;
+                Reg_AB_W= 1'd0;
+                EPC_W=    1'd0;
+                HILO_W =  1'd0;
+                ALU_Out_Reg_W=1'd0;
+                PCWriteCond=1'd0;
+                //muxs
+                ShiftIn=2'd0;
+                ShiftAmt=2'd0;
+                Shift=3'd4;
+                //prox estado
+                estado_atual=st_ShiftsToReg;
+                Counter=32'd0;
+
+            end
+
+            st_RT_Right_Shamt :begin
+
+                //writes
+                PC_W  =   1'd0; 
+                Mem_W =   1'd0;
+                MDR_W =   1'd0;
+                RAA_W =   1'd0;
+                IR_W =    1'd0;
+                RB_W =    1'd0;
+                Reg_AB_W= 1'd0;
+                EPC_W=    1'd0;
+                HILO_W =  1'd0;
+                ALU_Out_Reg_W=1'd0;
+                PCWriteCond=1'd0;
+                //muxs
+                ShiftIn=2'd1;
+                ShiftAmt=2'd1;
+                Shift=3'd3;
+                //prox estado
+                estado_atual=st_ShiftsToReg;
+                Counter=32'd0;
+
+            end
+
+            st_ShiftsToReg :begin
+
+                //writes
+                PC_W  =   1'd0; 
+                Mem_W =   1'd0;
+                MDR_W =   1'd0;
+                RAA_W =   1'd0;
+                IR_W =    1'd0;
+                RB_W =    1'd1; ///
+                Reg_AB_W= 1'd0;
+                EPC_W=    1'd0;
+                HILO_W =  1'd0;
+                ALU_Out_Reg_W=1'd0;
+                PCWriteCond=1'd0;
+                //muxs
+                RegDST=2'd3;
+                MemToReg= 4'd2;
+                //prox estado
+                estado_atual=st_Busca;
+                Counter=32'd0;
+
+            end
+
+            st_BEQ :begin
+
+                //writes
+                PC_W  =   1'd0; 
+                Mem_W =   1'd0;
+                MDR_W =   1'd0;
+                RAA_W =   1'd0;
+                IR_W =    1'd0;
+                RB_W =    1'd0; 
+                Reg_AB_W= 1'd0;
+                EPC_W=    1'd0;
+                HILO_W =  1'd0;
+                ALU_Out_Reg_W=1'd0; // uso a ula, mas nao libero a escrita pois no RegUlaOut esta o destino do desvio
+                PCWriteCond=1'd1; ///
+                //muxs    
+                ALUSrcA=2'd2;
+                ALUSrcB=3'd0;
+                UlaFunct=3'd7; //Comparacao, verificar flag EG
+                PCSource=3'd4;
+                CB=2'd0;
+                //prox estado
+                estado_atual=st_Busca;
+                Counter=32'd0;
+            end
+
+            st_BNE: begin
+                
+                 //writes
+                PC_W  =   1'd0; 
+                Mem_W =   1'd0;
+                MDR_W =   1'd0;
+                RAA_W =   1'd0;
+                IR_W =    1'd0;
+                RB_W =    1'd0; 
+                Reg_AB_W= 1'd0;
+                EPC_W=    1'd0;
+                HILO_W =  1'd0;
+                ALU_Out_Reg_W=1'd0; // uso a ula, mas nao libero a escrita pois no RegUlaOut esta o destino do desvio
+                PCWriteCond=1'd1; ///
+                //muxs    
+                ALUSrcA=2'd2;
+                ALUSrcB=3'd0;
+                UlaFunct=3'd7; //Comparacao, verificar flag EG
+                PCSource=3'd4;
+                CB=2'd1;
+                //prox estado
+                estado_atual=st_Busca;
+                Counter=32'd0;
+
+            end
+
+            st_BGT: begin
+                
+                 //writes
+                PC_W  =   1'd0; 
+                Mem_W =   1'd0;
+                MDR_W =   1'd0;
+                RAA_W =   1'd0;
+                IR_W =    1'd0;
+                RB_W =    1'd0; 
+                Reg_AB_W= 1'd0;
+                EPC_W=    1'd0;
+                HILO_W =  1'd0;
+                ALU_Out_Reg_W=1'd0; // uso a ula, mas nao libero a escrita pois no RegUlaOut esta o destino do desvio
+                PCWriteCond=1'd1; ///
+                //muxs    
+                ALUSrcA=2'd2;
+                ALUSrcB=3'd0;
+                UlaFunct=3'd7; //Comparacao, verificar flag EG
+                PCSource=3'd4;
+                CB=2'd2;
+                //prox estado
+                estado_atual=st_Busca;
+                Counter=32'd0;
+
+            end
+
+            st_BLE: begin
+                
+                 //writes
+                PC_W  =   1'd0; 
+                Mem_W =   1'd0;
+                MDR_W =   1'd0;
+                RAA_W =   1'd0;
+                IR_W =    1'd0;
+                RB_W =    1'd0; 
+                Reg_AB_W= 1'd0;
+                EPC_W=    1'd0;
+                HILO_W =  1'd0;
+                ALU_Out_Reg_W=1'd0; // uso a ula, mas nao libero a escrita pois no RegUlaOut esta o destino do desvio
+                PCWriteCond=1'd1; ///
+                //muxs    
+                ALUSrcA=2'd2;
+                ALUSrcB=3'd0;
+                UlaFunct=3'd7; //Comparacao, verificar flag EG
+                PCSource=3'd4;
+                CB=2'd3;
+                //prox estado
+                estado_atual=st_Busca;
+                Counter=32'd0;
+
+            end
+
+            st_ADDM :begin
+
+                if (Counter==32'd0 || Counter==32'd1 || Counter==32'd2) begin// 3 ciclos para ler RAA da memoria
+                    //writes
+                    PC_W  =   1'd0; 
+                    Mem_W =   1'd0;
+                    MDR_W =   1'd0; ///
+                    RAA_W =   1'd1; ///
+                    IR_W =    1'd0;
+                    RB_W =    1'd0; 
+                    Reg_AB_W= 1'd0;
+                    EPC_W=    1'd0;
+                    HILO_W =  1'd0;
+                    ALU_Out_Reg_W=1'd0;
+                    PCWriteCond=1'd0;
+
+                    Counter=Counter+32'd1;
+
+                end
+                else if (Counter==32'd3 || Counter==32'd4 || Counter==32'd5) begin// 3 ciclos para ler RAA da memoria
+                    //writes
+                    PC_W  =   1'd0; 
+                    Mem_W =   1'd0;
+                    MDR_W =   1'd1; ///
+                    RAA_W =   1'd0; ///
+                    IR_W =    1'd0;
+                    RB_W =    1'd0; 
+                    Reg_AB_W= 1'd0;
+                    EPC_W=    1'd0;
+                    HILO_W =  1'd0;
+                    ALU_Out_Reg_W=1'd1;
+                    PCWriteCond=1'd0;
+                    
+                    //muxs
+                    ALUSrcA=2'd1;
+                    ALUSrcB=3'd3;
+                    UlaFunct=3'd1; //soma
+
+                    Counter=Counter+32'd1;
+                end
+                else begin
+
+                    //writes
+                    PC_W  =   1'd0; 
+                    Mem_W =   1'd0;
+                    MDR_W =   1'd0; 
+                    RAA_W =   1'd0; 
+                    IR_W =    1'd0;
+                    RB_W =    1'd1; ///
+                    Reg_AB_W= 1'd0;
+                    EPC_W=    1'd0;
+                    HILO_W =  1'd0;
+                    ALU_Out_Reg_W=1'd0;
+                    PCWriteCond=1'd0;
+                    
+                    //muxs
+                    RegDST=2'd3;
+                    MemToReg= 4'd6;
+
+                    //prox estado
+                    Counter=32'd0;
+                    estado_atual=st_Busca;
+
+
+                end
+
+            end
+
+            st_SLLM :begin
+            
+                if (Counter==32'd0) begin
+                    //writes
+                    PC_W  =   1'd0; 
+                    Mem_W =   1'd0;
+                    MDR_W =   1'd0; 
+                    RAA_W =   1'd0; 
+                    IR_W =    1'd0;
+                    RB_W =    1'd0; 
+                    Reg_AB_W= 1'd0;
+                    EPC_W=    1'd0;
+                    HILO_W =  1'd0;
+                    ALU_Out_Reg_W=1'd1; ///
+                    PCWriteCond=1'd0;
+                    //muxs
+                    ALUSrcA=2'd2;
+                    ALUSrcB=3'd2;
+                    UlaFunct=3'd1; //soma
+
+                    Counter=Counter+32'd1;
+                end
+                else if (Counter==32'd1 || Counter==32'd2 || Counter==32'd3) begin //3 ciclos para ler memoria
+                    //writes
+                    PC_W  =   1'd0; 
+                    Mem_W =   1'd0;
+                    MDR_W =   1'd1; /// 
+                    RAA_W =   1'd0; 
+                    IR_W =    1'd0;
+                    RB_W =    1'd0; 
+                    Reg_AB_W= 1'd0;
+                    EPC_W=    1'd0;
+                    HILO_W =  1'd0;
+                    ALU_Out_Reg_W=1'd0;
+                    PCWriteCond=1'd0;
+                    //muxs
+                    IorD= 2'd1;
+
+                    Counter=Counter+32'd1;
+                end
+                else if (Counter==32'd4) begin 
+                    //writes
+                    PC_W  =   1'd0; 
+                    Mem_W =   1'd0;
+                    MDR_W =   1'd0; 
+                    RAA_W =   1'd0; 
+                    IR_W =    1'd0;
+                    RB_W =    1'd0; 
+                    Reg_AB_W= 1'd0;
+                    EPC_W=    1'd0;
+                    HILO_W =  1'd0;
+                    ALU_Out_Reg_W=1'd0;
+                    PCWriteCond=1'd0;
+                    //muxs
+                    ShiftIn=2'd1;
+                    ShiftAmt=2'd2;
+                    Shift=3'd2;
+
+                    Counter=Counter+32'd1;
+                end
+                else if (Counter==32'd5) begin 
+                    //writes
+                    PC_W  =   1'd0; 
+                    Mem_W =   1'd0;
+                    MDR_W =   1'd0; 
+                    RAA_W =   1'd0; 
+                    IR_W =    1'd0;
+                    RB_W =    1'd1; /// 
+                    Reg_AB_W= 1'd0;
+                    EPC_W=    1'd0;
+                    HILO_W =  1'd0;
+                    ALU_Out_Reg_W=1'd0;
+                    PCWriteCond=1'd0;
+                    //muxs
+                    RegDST=2'd0;
+                    MemToReg= 4'd2;
+                    //prox estado
+                    Counter=32'd0;
+                    estado_atual=st_Busca;
+                end
+
+            
+            end
+
+            st_LUI :begin
+
+                if (Counter==32'd0) begin
+                     //writes
+                    PC_W  =   1'd0; 
+                    Mem_W =   1'd0;
+                    MDR_W =   1'd0; 
+                    RAA_W =   1'd0; 
+                    IR_W =    1'd0;
+                    RB_W =    1'd0;
+                    Reg_AB_W= 1'd0;
+                    EPC_W=    1'd0;
+                    HILO_W =  1'd0;
+                    ALU_Out_Reg_W=1'd0;
+                    PCWriteCond=1'd0;
+                    //muxs
+                    ShiftIn=2'd2;
+                    ShiftAmt=2'd3;
+                    Shift=3'd2;
+
+                    Counter=Counter+32'd1;
+                end
+                else if (Counter==32'd1) begin
+                     //writes
+                    PC_W  =   1'd0; 
+                    Mem_W =   1'd0;
+                    MDR_W =   1'd0; 
+                    RAA_W =   1'd0; 
+                    IR_W =    1'd0;
+                    RB_W =    1'd1; ///
+                    Reg_AB_W= 1'd0;
+                    EPC_W=    1'd0;
+                    HILO_W =  1'd0;
+                    ALU_Out_Reg_W=1'd0;
+                    PCWriteCond=1'd0;
+                    //muxs
+                    RegDST= 2'd0;
+                    MemToReg= 4'd2;
+                    //prox estado
+                    Counter=32'd0;
+                    estado_atual=st_Busca;
+                end
+
+            end
+
+            st_ExceptionOP: begin
+                if (Counter==32'd0 || Counter==32'd1 || Counter==32'd2) begin// 3 ciclos para ler memoria
+                    //writes
+                    PC_W  =   1'd0;
+                    Mem_W =   1'd0;
+                    MDR_W =   1'd1;///
+                    RAA_W =   1'd0;
+                    IR_W =    1'd0;
+                    RB_W =    1'd0;
+                    Reg_AB_W= 1'd0;
+                    EPC_W=    1'd1;///
+                    HILO_W =  1'd0;
+                    ALU_Out_Reg_W=1'd0;
+                    PCWriteCond=1'd0;
+                    
+                    //Muxs
+                    IorD =     2'd2;
+                    //Controle de Operadores
+                    EC =       2'd0;
+                    //RegInterno
+                    Counter=Counter+32'd1; 
+                    //Estado_atual
+                    
+                end
+                else if (Counter==32'd3) begin
+                    //writes
+                    PC_W  =   1'd0;
+                    Mem_W =   1'd0;
+                    MDR_W =   1'd0;
+                    RAA_W =   1'd0;
+                    IR_W =    1'd0;
+                    RB_W =    1'd0;
+                    Reg_AB_W= 1'd0;
+                    EPC_W=    1'd0;
+                    HILO_W =  1'd0;
+                    ALU_Out_Reg_W=1'd0;
+                    PCWriteCond=1'd0;
+
+                    //Muxs
+                    PCSource=3'd5;
+                    //Controle de Operadores
+                    BHControl=1'd0;
+                    //RegInterno
+                    Counter=32'd0; 
+                    //Estado_atual
+                    estado_atual=st_Busca;
+
+                end
+            end
+            //default:
+
         endcase
     end
 end
@@ -833,22 +1821,11 @@ end
 
 
 endmodule
-/*
- //      muxsControl
-        controlDivMult;
-        WriteMemSrc;
-        PCWriteCond;
-        ShiftIn;
-        ShiftAmt;
-        BHControl;
-        EC_CTRL;
-        regDST;
-        CB;
-        IorD;
-        ALUSrcB;
-        PCSource;
-        memToReg;
-        Shift;
-        //      Control de blocos
-        ALUControl;
-        QualException;*/
+
+
+
+
+
+
+
+

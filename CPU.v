@@ -12,13 +12,14 @@ module CPU (
     wire RB_W;
     wire Reg_AB_W;
     wire ALU_Out_Reg_W,
-    wire controlDivMult;
+    wire DivOuMultMemToReg;
     wire WriteMemSrc;
     wire PCWriteCond;
     wire EPC_W;
     wire HILO_W;
-    wire ShiftIn;
-    wire ShiftAmt;
+    wire divOrMult;
+    wire [1:0] ShiftIn;
+    wire [1:0] ShiftAmt;
     wire BHControl;
     wire [1:0] EC_CTRL;
     wire [1:0] regDST;
@@ -403,7 +404,7 @@ module CPU (
     );
 
     muxDivMult MUX_div_mult(
-        controlDivMult,
+        DivOuMultMemToReg,
         LO_Out,
         HI_Out,
         mux_div_mult_out
