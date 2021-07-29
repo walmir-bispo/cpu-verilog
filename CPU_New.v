@@ -1,6 +1,31 @@
 module CPU (
     input wire clk,
-    input wire reset
+    input wire reset,
+	 
+    //output wire [31:0] PC_Out,
+    //output wire [31:0] MDR_Out,
+    //output wire [31:0] RAA_Out,
+    //output wire [5:0] Instr31_26,
+    //output wire [4:0] Instr25_21,
+    //output wire [4:0] Instr20_16,
+    //output wire [15:0] Instr15_0,
+    //output wire [31:0] RegReadData1A,
+    //output wire [31:0] RegReadData2B,
+    //output wire [31:0] Reg_A_Out,
+    //output wire [31:0] Reg_B_Out,
+    output wire [31:0] ALU_Out_Fio,
+    output wire [31:0] ALU_Out_Reg_Out,
+    //output wire [31:0] EPC_Out,
+    //output wire [31:0] HI_Out,
+    //output wire [31:0] LO_Out
+	//output wire [31:0] Mem_Out,
+	output wire [31:0] MuxMemToReg_Out,
+	output wire RB_W,
+	output wire [31:0] MuxALUSrcA_Out,
+   output wire [31:0] MuxALUSrcB_Out,
+	output wire [1:0] ALUSrcA,
+    output wire [2:0] ALUSrcB,
+	 output wire [2:0] ALUControl
 );
 
 // Fios de controle
@@ -9,7 +34,7 @@ module CPU (
     wire MDR_W;
     wire RAA_W;
     wire IR_W;
-    wire RB_W;
+    //wire RB_W;
     wire Reg_AB_W;
     wire ALU_Out_Reg_W;
     wire DivOuMultMemToReg;
@@ -25,11 +50,11 @@ module CPU (
     wire [1:0] regDST;
     wire [1:0] CB;
     wire [1:0] IorD;
-    wire [1:0] ALUSrcA;
-    wire [2:0] ALUSrcB;
+    //wire [1:0] ALUSrcA;
+    //wire [2:0] ALUSrcB;
     wire [2:0] PCSource;
     wire [2:0] memToReg;
-    wire [2:0] ALUControl;
+    //wire [2:0] ALUControl;
     wire [2:0] Shift;
     
 
@@ -51,12 +76,12 @@ module CPU (
     wire [31:0] MDR_Out;
     wire [31:0] RAA_Out;
     wire [15:0] Instr15_0;
-    wire [31:0] MuxMemToReg_Out;
+    //wire [31:0] MuxMemToReg_Out;
     wire [31:0] RegReadData1A;
     wire [31:0] RegReadData2B;
-    wire [31:0] MuxALUSrcA_Out;
-    wire [31:0] MuxALUSrcB_Out;
-    wire [31:0] ALU_Out_Fio;
+    //wire [31:0] MuxALUSrcA_Out;
+    //wire [31:0] MuxALUSrcB_Out;
+    //wire [31:0] ALU_Out_Fio;
     
     assign not_Flag_Igual = ~Flag_Igual;
 
@@ -73,9 +98,9 @@ module CPU (
     wire [31:0] LOMult;
     wire [31:0] HIMult;
     wire [31:0] MuxDivMultHI_Out;
-    wire [31:0] HI_Out;
+    //wire [31:0] HI_Out;
     wire [31:0] MuxDivMultLO_Out;
-    wire [31:0] LO_Out;
+   // wire [31:0] LO_Out;
     wire [31:0] signExtend_out;
     wire [31:0] shiftLeft32_out;
     wire [31:0] mux_shiftIn_Out;
@@ -91,10 +116,12 @@ module CPU (
     wire [31:0] load_half_byte_Out;
     wire [31:0] div_OutLO;
     wire [31:0] div_OutHI;
-    wire [31:0] ALU_Out_Reg_Out;
+    //wire [31:0] ALU_Out_Reg_Out;
     wire [31:0] mux_PCSource_out;
     wire [31:0] MUX_memoryToReg_out;
     wire [31:0] mux_div_mult_out;
+		wire [1:0] EC_CTRL_fazNada;
+
     
     Registrador PC(
         clk,
@@ -138,7 +165,7 @@ module CPU (
         clk,
         reset,
         IR_W,
-        Mem_out,
+        Mem_Out,
         Instr31_26, //OpCode
         Instr25_21, //RS
         Instr20_16, //RT
@@ -420,7 +447,8 @@ module CPU (
         MDR_Out, 
         ALU_Out_Reg_Out, 
         load_half_byte_Out,
-        MUX_memoryToReg_out
+		  MuxMemToReg_Out
+        
     );
     
     UnidadeDeControle ctrl_unit(
@@ -446,7 +474,7 @@ module CPU (
         WriteMemSrc,
         ShiftIn,
         ShiftAmt,
-        EC_CTRL,
+        EC_CTRL_fazNada,
         regDST,
         CB, 
         IorD,
