@@ -205,7 +205,7 @@ parameter R_ADDM=6'd5;
  //Excecao de OPCode inexistente deve ser tratada no Case, vai ser ultimo case, caso nenhuma das condicoes anteriores tenha entrado
 
 always @(posedge clk) begin
-    if (reset==1'd1) begin
+    if (reset==1'd1 || estado_atual==st_reset) begin
         
         //writes
         PC_W  =   1'd0;
@@ -987,7 +987,7 @@ always @(posedge clk) begin
                     Reg_AB_W= 1'd1;
                     EPC_W=    1'd0;
                     HILO_W =  1'd0;
-                    ALU_Out_Reg_W=1'd0; 
+                    ALU_Out_Reg_W=1'd1; 
                     PCWriteCond=1'd0;  
                     //muxs 
                     ALUSrcA=2'd2;
@@ -1848,3 +1848,9 @@ always @(posedge clk) begin
 end
 
 endmodule
+
+
+
+
+
+
