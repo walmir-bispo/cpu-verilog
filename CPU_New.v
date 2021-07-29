@@ -25,6 +25,7 @@ module CPU (
     wire [1:0] regDST;
     wire [1:0] CB;
     wire [1:0] IorD;
+    wire [1:0] ALUSrcA;
     wire [2:0] ALUSrcB;
     wire [2:0] PCSource;
     wire [2:0] memToReg;
