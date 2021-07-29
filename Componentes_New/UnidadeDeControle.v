@@ -241,7 +241,7 @@ always @(posedge clk) begin
             RAA_W =   1'd0;
             IR_W =    1'd0;
             RB_W =    1'd0;
-            Reg_AB_W= 1'd0;
+            Reg_AB_W= 1'd1;
             EPC_W=    1'd1;
             HILO_W =  1'd0;
             ALU_Out_Reg_W=1'd0;
@@ -264,7 +264,7 @@ always @(posedge clk) begin
             RAA_W =   1'd0;
             IR_W =    1'd0;
             RB_W =    1'd0;
-            Reg_AB_W= 1'd0;
+            Reg_AB_W= 1'd1;
             EPC_W=    1'd0;
             HILO_W =  1'd0;
             ALU_Out_Reg_W=1'd0;
@@ -295,7 +295,7 @@ always @(posedge clk) begin
             RAA_W =   1'd0;
             IR_W =    1'd0;
             RB_W =    1'd0;
-            Reg_AB_W= 1'd0;
+            Reg_AB_W= 1'd1;
             EPC_W=    1'd1;
             HILO_W =  1'd0;
             ALU_Out_Reg_W=1'd0;
@@ -318,7 +318,7 @@ always @(posedge clk) begin
             RAA_W =   1'd0;
             IR_W =    1'd0;
             RB_W =    1'd0;
-            Reg_AB_W= 1'd0;
+            Reg_AB_W= 1'd1;
             EPC_W=    1'd0;
             HILO_W =  1'd0;
             ALU_Out_Reg_W=1'd0;
@@ -339,7 +339,7 @@ always @(posedge clk) begin
             
             st_Busca:begin
                 
-                if (Counter==32'd0 || Counter==32'd1 || Counter==32'd2) begin//3 cilcos para ler memoria
+                if (Counter==32'd0 || Counter==32'd1 || Counter==32'd2) begin//3 ciclos para ler memoria
                     //writes
                     PC_W  =   1'd1; ///
                     Mem_W =   1'd0;
@@ -347,14 +347,14 @@ always @(posedge clk) begin
                     RAA_W =   1'd0;
                     IR_W =    1'd1; ///
                     RB_W =    1'd0;
-                    Reg_AB_W= 1'd0;
+                    Reg_AB_W= 1'd1;
                     EPC_W=    1'd0;
                     HILO_W =  1'd0;
                     ALU_Out_Reg_W=1'd1; 
                     PCWriteCond=1'd0;
                     //muxs
                     ALUSrcA=2'd0;
-                    ALUSrcB=3'd1;
+                    ALUSrcB=3'd4;
                     IorD=2'd0;
                     // Controle de operadores
                     UlaFunct=3'd1; //soma 
@@ -368,7 +368,7 @@ always @(posedge clk) begin
                     RAA_W =   1'd0;
                     IR_W =    1'd0; 
                     RB_W =    1'd0;
-                    Reg_AB_W= 1'd0;
+                    Reg_AB_W= 1'd1;
                     EPC_W=    1'd0;
                     HILO_W =  1'd0;
                     ALU_Out_Reg_W=1'd1; ///
@@ -547,7 +547,7 @@ always @(posedge clk) begin
                 RAA_W =   1'd0;
                 IR_W =    1'd0;
                 RB_W =    1'd0;
-                Reg_AB_W= 1'd0;
+                Reg_AB_W= 1'd1;
                 EPC_W=    1'd0;
                 HILO_W =  1'd0;
                 ALU_Out_Reg_W=1'd1; ///
@@ -599,7 +599,7 @@ always @(posedge clk) begin
                 RAA_W =   1'd0;
                 IR_W =    1'd0;
                 RB_W =    1'd0;
-                Reg_AB_W= 1'd0;
+                Reg_AB_W= 1'd1;
                 EPC_W=    1'd0;
                 HILO_W =  1'd0;
                 ALU_Out_Reg_W=1'd0;
@@ -619,7 +619,7 @@ always @(posedge clk) begin
                     RAA_W =   1'd0;
                     IR_W =    1'd0;
                     RB_W =    1'd0;
-                    Reg_AB_W= 1'd0;
+                    Reg_AB_W= 1'd1;
                     EPC_W=    1'd0;
                     HILO_W =  1'd0;
                     ALU_Out_Reg_W=1'd0;
@@ -667,7 +667,7 @@ always @(posedge clk) begin
                 RAA_W =   1'd0;
                 IR_W =    1'd0;
                 RB_W =    1'd1;///
-                Reg_AB_W= 1'd0;
+                Reg_AB_W= 1'd1;
                 EPC_W=    1'd0;
                 HILO_W =  1'd0;
                 ALU_Out_Reg_W=1'd0;
@@ -694,7 +694,7 @@ always @(posedge clk) begin
                 RAA_W =   1'd0;
                 IR_W =    1'd0;
                 RB_W =    1'd1;///
-                Reg_AB_W= 1'd0;
+                Reg_AB_W= 1'd1;
                 EPC_W=    1'd0;
                 HILO_W =  1'd0;
                 ALU_Out_Reg_W=1'd0;
@@ -721,7 +721,7 @@ always @(posedge clk) begin
                 RAA_W =   1'd0;
                 IR_W =    1'd0;
                 RB_W =    1'd1;///
-                Reg_AB_W= 1'd0;
+                Reg_AB_W= 1'd1;
                 EPC_W=    1'd0;
                 HILO_W =  1'd0;
                 ALU_Out_Reg_W=1'd0;
@@ -749,7 +749,7 @@ always @(posedge clk) begin
                     RAA_W =   1'd0;
                     IR_W =    1'd0;
                     RB_W =    1'd0;
-                    Reg_AB_W= 1'd0;
+                    Reg_AB_W= 1'd1;
                     EPC_W=    1'd0;
                     HILO_W =  1'd0;
                     ALU_Out_Reg_W=1'd0;
@@ -772,7 +772,7 @@ always @(posedge clk) begin
                     RAA_W =   1'd0;
                     IR_W =    1'd0;
                     RB_W =    1'd0;
-                    Reg_AB_W= 1'd0;
+                    Reg_AB_W= 1'd1;
                     EPC_W=    1'd0;
                     HILO_W =  1'd0;
                     ALU_Out_Reg_W=1'd0;
@@ -799,7 +799,7 @@ always @(posedge clk) begin
                     RAA_W =   1'd0;
                     IR_W =    1'd0;
                     RB_W =    1'd0;
-                    Reg_AB_W= 1'd0;
+                    Reg_AB_W= 1'd1;
                     EPC_W=    1'd0;
                     HILO_W =  1'd0;
                     ALU_Out_Reg_W=1'd0;
@@ -825,7 +825,7 @@ always @(posedge clk) begin
                     RAA_W =   1'd0;
                     IR_W =    1'd0;
                     RB_W =    1'd0;
-                    Reg_AB_W= 1'd0;
+                    Reg_AB_W= 1'd1;
                     EPC_W=    1'd0;
                     HILO_W =  1'd0;
                     ALU_Out_Reg_W=1'd0;
@@ -855,7 +855,7 @@ always @(posedge clk) begin
                     RAA_W =   1'd0;
                     IR_W =    1'd0;
                     RB_W =    1'd0;
-                    Reg_AB_W= 1'd0;
+                    Reg_AB_W= 1'd1;
                     EPC_W=    1'd0;
                     HILO_W =  1'd0;
                     ALU_Out_Reg_W=1'd0;
@@ -881,7 +881,7 @@ always @(posedge clk) begin
                     RAA_W =   1'd0;
                     IR_W =    1'd0;
                     RB_W =    1'd0;
-                    Reg_AB_W= 1'd0;
+                    Reg_AB_W= 1'd1;
                     EPC_W=    1'd0;
                     HILO_W =  1'd0;
                     ALU_Out_Reg_W=1'd0;
@@ -911,7 +911,7 @@ always @(posedge clk) begin
                     RAA_W =   1'd0;
                     IR_W =    1'd0;
                     RB_W =    1'd0;
-                    Reg_AB_W= 1'd0;
+                    Reg_AB_W= 1'd1;
                     EPC_W=    1'd0;
                     HILO_W =  1'd0;
                     ALU_Out_Reg_W=1'd1;
@@ -956,7 +956,7 @@ always @(posedge clk) begin
                     RAA_W =   1'd0;
                     IR_W =    1'd0;
                     RB_W =    1'd1;///
-                    Reg_AB_W= 1'd0;
+                    Reg_AB_W= 1'd1;
                     EPC_W=    1'd0;
                     HILO_W =  1'd0;
                     ALU_Out_Reg_W=1'd0;
@@ -984,7 +984,7 @@ always @(posedge clk) begin
                     RAA_W =   1'd0;
                     IR_W =    1'd0;
                     RB_W =    1'd0;
-                    Reg_AB_W= 1'd0;
+                    Reg_AB_W= 1'd1;
                     EPC_W=    1'd0;
                     HILO_W =  1'd0;
                     ALU_Out_Reg_W=1'd0; 
@@ -1016,7 +1016,7 @@ always @(posedge clk) begin
                     RAA_W =   1'd0;
                     IR_W =    1'd0;
                     RB_W =    1'd1;///
-                    Reg_AB_W= 1'd0;
+                    Reg_AB_W= 1'd1;
                     EPC_W=    1'd0;
                     HILO_W =  1'd0;
                     ALU_Out_Reg_W=1'd0;
@@ -1043,7 +1043,7 @@ always @(posedge clk) begin
                     RAA_W =   1'd0;
                     IR_W =    1'd0;
                     RB_W =    1'd0;
-                    Reg_AB_W= 1'd0;
+                    Reg_AB_W= 1'd1;
                     EPC_W=    1'd0;
                     HILO_W =  1'd0;
                     ALU_Out_Reg_W=1'd0;
@@ -1063,7 +1063,7 @@ always @(posedge clk) begin
                     RAA_W =   1'd0;
                     IR_W =    1'd0;
                     RB_W =    1'd1; ///
-                    Reg_AB_W= 1'd0;
+                    Reg_AB_W= 1'd1;
                     EPC_W=    1'd0;
                     HILO_W =  1'd0;
                     ALU_Out_Reg_W=1'd0; 
@@ -1087,7 +1087,7 @@ always @(posedge clk) begin
                     RAA_W =   1'd0;
                     IR_W =    1'd0;
                     RB_W =    1'd0;
-                    Reg_AB_W= 1'd0;
+                    Reg_AB_W= 1'd1;
                     EPC_W=    1'd0;
                     HILO_W =  1'd0;
                     ALU_Out_Reg_W=1'd0; 
@@ -1107,7 +1107,7 @@ always @(posedge clk) begin
                     RAA_W =   1'd0;
                     IR_W =    1'd0;
                     RB_W =    1'd1; ///
-                    Reg_AB_W= 1'd0;
+                    Reg_AB_W= 1'd1;
                     EPC_W=    1'd0;
                     HILO_W =  1'd0;
                     ALU_Out_Reg_W=1'd0; 
@@ -1131,7 +1131,7 @@ always @(posedge clk) begin
                     RAA_W =   1'd0;
                     IR_W =    1'd0;
                     RB_W =    1'd0; 
-                    Reg_AB_W= 1'd0;
+                    Reg_AB_W= 1'd1;
                     EPC_W=    1'd0;
                     HILO_W =  1'd0;
                     ALU_Out_Reg_W=1'd0;
@@ -1159,7 +1159,7 @@ always @(posedge clk) begin
                 RAA_W =   1'd0;
                 IR_W =    1'd0;
                 RB_W =    1'd1; ///
-                Reg_AB_W= 1'd0;
+                Reg_AB_W= 1'd1;
                 EPC_W=    1'd0;
                 HILO_W =  1'd0;
                 ALU_Out_Reg_W=1'd0; 
@@ -1182,7 +1182,7 @@ always @(posedge clk) begin
                     RAA_W =   1'd0;
                     IR_W =    1'd0;
                     RB_W =    1'd0;
-                    Reg_AB_W= 1'd0;
+                    Reg_AB_W= 1'd1;
                     EPC_W=    1'd0;
                     HILO_W =  1'd0;
                     ALU_Out_Reg_W=1'd0;
@@ -1198,7 +1198,7 @@ always @(posedge clk) begin
                     RAA_W =   1'd0;
                     IR_W =    1'd0;
                     RB_W =    1'd0;
-                    Reg_AB_W= 1'd0;
+                    Reg_AB_W= 1'd1;
                     EPC_W=    1'd0;
                     HILO_W =  1'd0; ///
                     ALU_Out_Reg_W=1'd0;
@@ -1222,7 +1222,7 @@ always @(posedge clk) begin
                     RAA_W =   1'd0;
                     IR_W =    1'd0;
                     RB_W =    1'd0;
-                    Reg_AB_W= 1'd0;
+                    Reg_AB_W= 1'd1;
                     EPC_W=    1'd0;
                     HILO_W =  1'd0;
                     ALU_Out_Reg_W=1'd0;
@@ -1238,7 +1238,7 @@ always @(posedge clk) begin
                     RAA_W =   1'd0;
                     IR_W =    1'd0;
                     RB_W =    1'd0;
-                    Reg_AB_W= 1'd0;
+                    Reg_AB_W= 1'd1;
                     EPC_W=    1'd0;
                     HILO_W =  1'd1; ///
                     ALU_Out_Reg_W=1'd0;
@@ -1264,7 +1264,7 @@ always @(posedge clk) begin
                 RAA_W =   1'd0;
                 IR_W =    1'd0;
                 RB_W =    1'd1; ///
-                Reg_AB_W= 1'd0;
+                Reg_AB_W= 1'd1;
                 EPC_W=    1'd0;
                 HILO_W =  1'd0;
                 ALU_Out_Reg_W=1'd0;
@@ -1288,7 +1288,7 @@ always @(posedge clk) begin
                 RAA_W =   1'd0;
                 IR_W =    1'd0;
                 RB_W =    1'd1; ///
-                Reg_AB_W= 1'd0;
+                Reg_AB_W= 1'd1;
                 EPC_W=    1'd0;
                 HILO_W =  1'd0;
                 ALU_Out_Reg_W=1'd0;
@@ -1312,7 +1312,7 @@ always @(posedge clk) begin
                 RAA_W =   1'd0;
                 IR_W =    1'd0;
                 RB_W =    1'd0;
-                Reg_AB_W= 1'd0;
+                Reg_AB_W= 1'd1;
                 EPC_W=    1'd0;
                 HILO_W =  1'd0;
                 ALU_Out_Reg_W=1'd0;
@@ -1335,7 +1335,7 @@ always @(posedge clk) begin
                 RAA_W =   1'd0;
                 IR_W =    1'd0;
                 RB_W =    1'd0;
-                Reg_AB_W= 1'd0;
+                Reg_AB_W= 1'd1;
                 EPC_W=    1'd0;
                 HILO_W =  1'd0;
                 ALU_Out_Reg_W=1'd0;
@@ -1358,7 +1358,7 @@ always @(posedge clk) begin
                 RAA_W =   1'd0;
                 IR_W =    1'd0;
                 RB_W =    1'd0;
-                Reg_AB_W= 1'd0;
+                Reg_AB_W= 1'd1;
                 EPC_W=    1'd0;
                 HILO_W =  1'd0;
                 ALU_Out_Reg_W=1'd0;
@@ -1382,7 +1382,7 @@ always @(posedge clk) begin
                 RAA_W =   1'd0;
                 IR_W =    1'd0;
                 RB_W =    1'd0;
-                Reg_AB_W= 1'd0;
+                Reg_AB_W= 1'd1;
                 EPC_W=    1'd0;
                 HILO_W =  1'd0;
                 ALU_Out_Reg_W=1'd0;
@@ -1406,7 +1406,7 @@ always @(posedge clk) begin
                 RAA_W =   1'd0;
                 IR_W =    1'd0;
                 RB_W =    1'd0;
-                Reg_AB_W= 1'd0;
+                Reg_AB_W= 1'd1;
                 EPC_W=    1'd0;
                 HILO_W =  1'd0;
                 ALU_Out_Reg_W=1'd0;
@@ -1430,7 +1430,7 @@ always @(posedge clk) begin
                 RAA_W =   1'd0;
                 IR_W =    1'd0;
                 RB_W =    1'd0;
-                Reg_AB_W= 1'd0;
+                Reg_AB_W= 1'd1;
                 EPC_W=    1'd0;
                 HILO_W =  1'd0;
                 ALU_Out_Reg_W=1'd0;
@@ -1454,7 +1454,7 @@ always @(posedge clk) begin
                 RAA_W =   1'd0;
                 IR_W =    1'd0;
                 RB_W =    1'd0;
-                Reg_AB_W= 1'd0;
+                Reg_AB_W= 1'd1;
                 EPC_W=    1'd0;
                 HILO_W =  1'd0;
                 ALU_Out_Reg_W=1'd0;
@@ -1478,7 +1478,7 @@ always @(posedge clk) begin
                 RAA_W =   1'd0;
                 IR_W =    1'd0;
                 RB_W =    1'd1; ///
-                Reg_AB_W= 1'd0;
+                Reg_AB_W= 1'd1;
                 EPC_W=    1'd0;
                 HILO_W =  1'd0;
                 ALU_Out_Reg_W=1'd0;
@@ -1501,7 +1501,7 @@ always @(posedge clk) begin
                 RAA_W =   1'd0;
                 IR_W =    1'd0;
                 RB_W =    1'd0; 
-                Reg_AB_W= 1'd0;
+                Reg_AB_W= 1'd1;
                 EPC_W=    1'd0;
                 HILO_W =  1'd0;
                 ALU_Out_Reg_W=1'd0; // uso a ula, mas nao libero a escrita pois no RegUlaOut esta o destino do desvio
@@ -1526,7 +1526,7 @@ always @(posedge clk) begin
                 RAA_W =   1'd0;
                 IR_W =    1'd0;
                 RB_W =    1'd0; 
-                Reg_AB_W= 1'd0;
+                Reg_AB_W= 1'd1;
                 EPC_W=    1'd0;
                 HILO_W =  1'd0;
                 ALU_Out_Reg_W=1'd0; // uso a ula, mas nao libero a escrita pois no RegUlaOut esta o destino do desvio
@@ -1552,7 +1552,7 @@ always @(posedge clk) begin
                 RAA_W =   1'd0;
                 IR_W =    1'd0;
                 RB_W =    1'd0; 
-                Reg_AB_W= 1'd0;
+                Reg_AB_W= 1'd1;
                 EPC_W=    1'd0;
                 HILO_W =  1'd0;
                 ALU_Out_Reg_W=1'd0; // uso a ula, mas nao libero a escrita pois no RegUlaOut esta o destino do desvio
@@ -1578,7 +1578,7 @@ always @(posedge clk) begin
                 RAA_W =   1'd0;
                 IR_W =    1'd0;
                 RB_W =    1'd0; 
-                Reg_AB_W= 1'd0;
+                Reg_AB_W= 1'd1;
                 EPC_W=    1'd0;
                 HILO_W =  1'd0;
                 ALU_Out_Reg_W=1'd0; // uso a ula, mas nao libero a escrita pois no RegUlaOut esta o destino do desvio
@@ -1605,7 +1605,7 @@ always @(posedge clk) begin
                     RAA_W =   1'd1; ///
                     IR_W =    1'd0;
                     RB_W =    1'd0; 
-                    Reg_AB_W= 1'd0;
+                    Reg_AB_W= 1'd1;
                     EPC_W=    1'd0;
                     HILO_W =  1'd0;
                     ALU_Out_Reg_W=1'd0;
@@ -1622,7 +1622,7 @@ always @(posedge clk) begin
                     RAA_W =   1'd0; ///
                     IR_W =    1'd0;
                     RB_W =    1'd0; 
-                    Reg_AB_W= 1'd0;
+                    Reg_AB_W= 1'd1;
                     EPC_W=    1'd0;
                     HILO_W =  1'd0;
                     ALU_Out_Reg_W=1'd1;
@@ -1644,7 +1644,7 @@ always @(posedge clk) begin
                     RAA_W =   1'd0; 
                     IR_W =    1'd0;
                     RB_W =    1'd1; ///
-                    Reg_AB_W= 1'd0;
+                    Reg_AB_W= 1'd1;
                     EPC_W=    1'd0;
                     HILO_W =  1'd0;
                     ALU_Out_Reg_W=1'd0;
@@ -1673,7 +1673,7 @@ always @(posedge clk) begin
                     RAA_W =   1'd0; 
                     IR_W =    1'd0;
                     RB_W =    1'd0; 
-                    Reg_AB_W= 1'd0;
+                    Reg_AB_W= 1'd1;
                     EPC_W=    1'd0;
                     HILO_W =  1'd0;
                     ALU_Out_Reg_W=1'd1; ///
@@ -1693,7 +1693,7 @@ always @(posedge clk) begin
                     RAA_W =   1'd0; 
                     IR_W =    1'd0;
                     RB_W =    1'd0; 
-                    Reg_AB_W= 1'd0;
+                    Reg_AB_W= 1'd1;
                     EPC_W=    1'd0;
                     HILO_W =  1'd0;
                     ALU_Out_Reg_W=1'd0;
@@ -1711,7 +1711,7 @@ always @(posedge clk) begin
                     RAA_W =   1'd0; 
                     IR_W =    1'd0;
                     RB_W =    1'd0; 
-                    Reg_AB_W= 1'd0;
+                    Reg_AB_W= 1'd1;
                     EPC_W=    1'd0;
                     HILO_W =  1'd0;
                     ALU_Out_Reg_W=1'd0;
@@ -1731,7 +1731,7 @@ always @(posedge clk) begin
                     RAA_W =   1'd0; 
                     IR_W =    1'd0;
                     RB_W =    1'd1; /// 
-                    Reg_AB_W= 1'd0;
+                    Reg_AB_W= 1'd1;
                     EPC_W=    1'd0;
                     HILO_W =  1'd0;
                     ALU_Out_Reg_W=1'd0;
@@ -1757,7 +1757,7 @@ always @(posedge clk) begin
                     RAA_W =   1'd0; 
                     IR_W =    1'd0;
                     RB_W =    1'd0;
-                    Reg_AB_W= 1'd0;
+                    Reg_AB_W= 1'd1;
                     EPC_W=    1'd0;
                     HILO_W =  1'd0;
                     ALU_Out_Reg_W=1'd0;
@@ -1777,7 +1777,7 @@ always @(posedge clk) begin
                     RAA_W =   1'd0; 
                     IR_W =    1'd0;
                     RB_W =    1'd1; ///
-                    Reg_AB_W= 1'd0;
+                    Reg_AB_W= 1'd1;
                     EPC_W=    1'd0;
                     HILO_W =  1'd0;
                     ALU_Out_Reg_W=1'd0;
@@ -1801,7 +1801,7 @@ always @(posedge clk) begin
                     RAA_W =   1'd0;
                     IR_W =    1'd0;
                     RB_W =    1'd0;
-                    Reg_AB_W= 1'd0;
+                    Reg_AB_W= 1'd1;
                     EPC_W=    1'd1;///
                     HILO_W =  1'd0;
                     ALU_Out_Reg_W=1'd0;
@@ -1824,7 +1824,7 @@ always @(posedge clk) begin
                     RAA_W =   1'd0;
                     IR_W =    1'd0;
                     RB_W =    1'd0;
-                    Reg_AB_W= 1'd0;
+                    Reg_AB_W= 1'd1;
                     EPC_W=    1'd0;
                     HILO_W =  1'd0;
                     ALU_Out_Reg_W=1'd0;
