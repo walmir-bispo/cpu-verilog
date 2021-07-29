@@ -421,6 +421,43 @@ module CPU (
         load_half_byte_Out,
         MUX_memoryToReg_out
     );
+    
+    UnidadeDeControle ctrl_unit(
+        clk,
+        reset,
+        Instr15_0[5:0],
+        divPor0,
+        Instr31_26, 
+        Flag_Overflow,
+        PC_W,
+        Mem_W,
+        MDR_W,
+        RAA_W,
+        IR_W,
+        RB_W,
+        Reg_AB_W,
+        EPC_W,
+        HILO_W,
+        ALU_Out_Reg_W,
+        PCWriteCond,
+        DivOuMultMemToReg,
+        divOrMult,
+        WriteMemSrc,
+        ShiftIn,
+        ShiftAmt,
+        EC_CTRL,
+        regDST,
+        CB, 
+        IorD,
+        ALUSrcA,
+        ALUSrcB,
+        PCSource,
+        memToReg,
+        Shift,
+        BHControl,
+        ALUControl,
+        EC_CTRL 
+    );
 
 
 
