@@ -354,7 +354,7 @@ always @(posedge clk) begin
                     PCWriteCond=1'd0;
                     //muxs
                     ALUSrcA=2'd0;
-                    ALUSrcB=3'd4;
+                    ALUSrcB=3'd1;
                     IorD=2'd0;
                     // Controle de operadores
                     UlaFunct=3'd1; //soma 
@@ -376,7 +376,7 @@ always @(posedge clk) begin
 
                     //muxs
                     ALUSrcA=2'd0;
-                    ALUSrcB=3'd1;
+                    ALUSrcB=3'd4;
                     IorD=2'd0;
                     // Controle de operadores
                     UlaFunct=3'd1; //soma 
