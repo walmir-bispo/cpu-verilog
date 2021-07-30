@@ -356,6 +356,9 @@ always @(posedge clk) begin
                     ALUSrcA=2'd0;
                     ALUSrcB=3'd1;
                     IorD=2'd0;
+                    PCSource=3'd2;
+                    //PCSource=3'd4;
+
                     // Controle de operadores
                     UlaFunct=3'd1; //soma 
                     Counter= Counter+ 32'd1;
