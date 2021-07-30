@@ -127,7 +127,7 @@ module CPU (
         clk,
         reset,
         AndOrPC_W_out,
-        PC_In,
+        mux_PCSource_out,
         PC_Out
     );
 
