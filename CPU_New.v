@@ -1,21 +1,6 @@
 module CPU (
     input wire clk,
-    input wire reset,
-	 
-    //output wire [31:0] PC_Out,
-    //output wire [31:0] MDR_Out,
-    //output wire [31:0] RAA_Out,
-    //output wire [5:0] Instr31_26,
-    //output wire [4:0] Instr25_21,
-    //output wire [4:0] Instr20_16,
-    //output wire [15:0] Instr15_0,
-    //output wire [31:0] RegReadData1A,
-    //output wire [31:0] RegReadData2B,
-    //output wire [31:0] Reg_A_Out,
-    //output wire [31:0] Reg_B_Out,
-    //output wire [31:0] EPC_Out,
-	//output wire [31:0] Mem_Out,
-	 
+    input wire reset	
 );
 
 // Fios de controle
