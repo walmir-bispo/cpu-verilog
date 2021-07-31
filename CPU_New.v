@@ -95,7 +95,7 @@ module CPU (
     wire [31:0] mux_PCSource_out;
     wire [31:0] MUX_memoryToReg_out;
     wire [31:0] mux_div_mult_out;
-	wire [1:0] EC_CTRL_fazNada;
+    wire [1:0] EC_CTRL_fazNada;
 
     
     Registrador PC(
