@@ -466,7 +466,7 @@ always @(posedge clk) begin
                         I_ADDI:begin
                             estado_atual=st_addImediato;
                         end 
-                        I_ADDI:begin
+                        I_ADDIU:begin
                             estado_atual=st_addImediato; //nao tem o estado ADDIU
                         end
 
@@ -527,7 +527,7 @@ always @(posedge clk) begin
                         end
 
                         J_JAL :begin
-                            estado_atual=st_Jump;
+                            estado_atual=st_JAL;
                         end
                         
 
@@ -594,7 +594,7 @@ always @(posedge clk) begin
            
            st_Loads:begin
                 
-                if (Counter==32'd0 || Counter==32'd1) begin//3 cilcos para ler memoria
+                if (Counter==32'd0 || Counter==32'd1|| Counter==32'd2) begin//3 cilcos para ler memoria
                      //writes
                 PC_W  =   1'd0;
                 Mem_W =   1'd0;
@@ -764,8 +764,8 @@ always @(posedge clk) begin
 
                     //RegInterno
                     Counter= Counter+32'd1; 
-                    //mudando para o prox estado
-                    estado_atual=st_Busca; 
+                    
+                    
                end
                else begin
                     //writes
@@ -941,7 +941,7 @@ always @(posedge clk) begin
 
                     //trantando do prox estado
 
-                    if (Flag_Overflow==1'd1) begin
+                    if (Flag_Overflow==1'd1 && funct==R_ADD) begin
                         estado_atual=st_Overflow;
                         //contador esta em zero
                     end
@@ -1143,12 +1143,10 @@ always @(posedge clk) begin
                     PCSource=3'd0;
                     //prox estado
                     Counter= 32'd0;
-                    if (OPCode==J_JAL) begin
-                        estado_atual=st_JAL;
-                    end
-                    else begin
-                        estado_atual=st_Busca;
-                    end
+                   
+                    
+                    estado_atual=st_Busca;
+                    
 
 
             end
@@ -1172,7 +1170,7 @@ always @(posedge clk) begin
                 MemToReg= 4'd0;
                 //prox estado
                 Counter=32'd0;
-                estado_atual=st_Busca;
+                estado_atual=st_Jump;
 
             end
 
@@ -1203,7 +1201,7 @@ always @(posedge clk) begin
                     RB_W =    1'd0;
                     Reg_AB_W= 1'd1;
                     EPC_W=    1'd0;
-                    HILO_W =  1'd0; ///
+                    HILO_W =  1'd1; ///
                     ALU_Out_Reg_W=1'd0;
                     PCWriteCond=1'd0;
                     //muxs
@@ -1563,7 +1561,7 @@ always @(posedge clk) begin
                 //muxs    
                 ALUSrcA=2'd2;
                 ALUSrcB=3'd0;
-                UlaFunct=3'd7; //Comparacao, verificar flag EG
+                UlaFunct=3'd7; //Comparacao
                 PCSource=3'd4;
                 CB=2'd2;
                 //prox estado
@@ -1589,7 +1587,7 @@ always @(posedge clk) begin
                 //muxs    
                 ALUSrcA=2'd2;
                 ALUSrcB=3'd0;
-                UlaFunct=3'd7; //Comparacao, verificar flag EG
+                UlaFunct=3'd7; //Comparacao
                 PCSource=3'd4;
                 CB=2'd3;
                 //prox estado
@@ -1617,7 +1615,7 @@ always @(posedge clk) begin
                     Counter=Counter+32'd1;
 
                 end
-                else if (Counter==32'd3 || Counter==32'd4 || Counter==32'd5) begin// 3 ciclos para ler RAA da memoria
+                else if (Counter==32'd3 || Counter==32'd4 || Counter==32'd5) begin// 3 ciclos para ler MDR da memoria
                     //writes
                     PC_W  =   1'd0; 
                     Mem_W =   1'd0;
